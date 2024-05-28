@@ -1,5 +1,5 @@
-name: ozonteck_mobile
-description: "A new Flutter project."
+name: product_repository
+description: "A dart package which managers the product."
 publish_to: 'none' 
 version: 1.0.0+1
 
@@ -9,11 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.6
-
   # Firebase
-  firebase_core: ^2.9.0
-  firebase_auth: ^4.8.0
 
 dev_dependencies:
   flutter_test:

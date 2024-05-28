@@ -1,5 +1,5 @@
-name: ozonteck_mobile
-description: "A new Flutter project."
+name: user_repository
+description: "A dart package which managers the user."
 publish_to: 'none' 
 version: 1.0.0+1
 
@@ -8,12 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.6
+  equatable: ^2.0.5
 
   # Firebase
-  firebase_core: ^2.9.0
-  firebase_auth: ^4.8.0
+  firebase_auth: ^4.20.0
+  cloud_firestore: ^4.17.5
 
 dev_dependencies:
   flutter_test:

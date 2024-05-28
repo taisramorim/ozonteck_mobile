@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986258970425",
+    "project_id": "oztmobile-750cd",
+    "storage_bucket": "oztmobile-750cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986258970425:android:5f8985f050f09779e47ae8",
+        "android_client_info": {
+          "package_name": "com.example.ozonteck_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGI6eAGUJGM5wI4a9_MLKRgzs50WjzKNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
