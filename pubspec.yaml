@@ -8,13 +8,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.0.0
+ 
 
   cupertino_icons: ^1.0.6
 
   # Firebase
   firebase_core: ^2.9.0
   firebase_auth: ^4.8.0
+
+  #BLoC
+  flutter_bloc: ^8.0.0
+  equatable: ^2.0.5
+  bloc: ^8.1.4
+
+  # Custom Repository
+  user_repository:
+    path: packages/user_repository
 
 dev_dependencies:
   flutter_test:
