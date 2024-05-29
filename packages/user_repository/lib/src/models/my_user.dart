@@ -58,7 +58,7 @@ class MyUser extends Equatable {
     return MyUser(
       id: entity.id,
       email: entity.email,
-      name: entity.email,
+      name: entity.name,
       picture: entity.picture,
     );
   }
