@@ -6,6 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
+import 'package:ozonteck_mobile/screens/pages/balance_page.dart';
+import 'package:ozonteck_mobile/screens/pages/net_page.dart';
+import 'package:ozonteck_mobile/screens/pages/orders_page.dart';
+import 'package:ozonteck_mobile/screens/pages/products_page.dart';
+import 'package:ozonteck_mobile/screens/pages/score_page.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -14,8 +19,6 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-
-
 
   class _HomeScreenState extends State<HomeScreen>{
       @override
@@ -140,14 +143,20 @@ class HomeScreen extends StatefulWidget {
                   height: 150,
                   width: 300,
                   child: FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () {                      
+                          Navigator.push(
+                            context, MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const ScorePage()
+                              ));
+                    },
                     backgroundColor: Theme.of(context).colorScheme.onTertiary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     child: Image.network(
                         'https://firebasestorage.googleapis.com/v0/b/oztmobile-750cd.appspot.com/o/Pins%2Froyal-black.png?alt=media&token=4683efb9-7d2e-4ac2-b99c-f58fc6c2bbd6',
                         height: 70,
-                        width: 70),
+                        width: 70
+                      ),
                   ),
                 ),
                 const SizedBox(height: 100),
@@ -159,7 +168,13 @@ class HomeScreen extends StatefulWidget {
                       height: 100,
                       width: 100,
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context, MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const BalancePage()
+                            )
+                          );
+                        },
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: const CircleBorder(),
                         child: const Icon(Icons.wallet, color: Colors.white),
@@ -169,7 +184,11 @@ class HomeScreen extends StatefulWidget {
                       height: 100,
                       width: 100,
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context, MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const NetPage()
+                              ));},
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: const CircleBorder(),
                         child: const Icon(Icons.people, color: Colors.white),
@@ -179,7 +198,11 @@ class HomeScreen extends StatefulWidget {
                       height: 100,
                       width: 100,
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context, MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const ProductsPage()
+                              ));},
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: const CircleBorder(),
                         child: const Icon(Icons.scale, color: Colors.white),
@@ -196,7 +219,12 @@ class HomeScreen extends StatefulWidget {
                       height: 100,
                       width: 100,
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        onPressed: () {                          
+                          Navigator.push(
+                            context, MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const OrdersPage()
+                              ));
+                        },
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: const CircleBorder(),
                         child: const Icon(Icons.shopping_bag, color: Colors.white),
@@ -231,6 +259,5 @@ class HomeScreen extends StatefulWidget {
         ),
     );
   }
-    
-  }
+}
   
