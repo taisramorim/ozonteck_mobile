@@ -1,8 +1,7 @@
 part of 'sign_in_bloc.dart';
 
-@immutable
 abstract class SignInState extends Equatable {
-	const SignInState();
+  const SignInState();
   
   @override
   List<Object> get props => [];
@@ -10,10 +9,11 @@ abstract class SignInState extends Equatable {
 
 class SignInInitial extends SignInState {}
 
-class SignInSuccess extends SignInState {}
-class SignInFailure extends SignInState {
-	final String? message;
+class SignInSuccess extends SignInState{}
 
-	const SignInFailure({this.message});
+class SignInFailure extends SignInState {
+  final String? message;
+  const SignInFailure({this.message});
 }
-class SignInProcess extends SignInState {}
+
+class SignInProcess extends SignInState{}

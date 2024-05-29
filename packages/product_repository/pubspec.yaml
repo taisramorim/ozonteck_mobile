@@ -1,22 +1,21 @@
 name: product_repository
-description: "A dart package which managers the product."
-publish_to: 'none' 
-version: 1.0.0+1
+description: "The repo that handle products"
+publish_to: 'none'
+version: 0.1.0
 
 environment:
-  sdk: '>=3.4.1 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
-
-  # Firebase
+    
+  cloud_firestore: ^4.17.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^3.0.0
 
 flutter:
-
   uses-material-design: true

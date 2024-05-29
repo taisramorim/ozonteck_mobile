@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ozonteck_mobile/screens/authentication/sign_in.dart';
-import 'package:ozonteck_mobile/screens/authentication/sign_up.dart';
+import 'package:ozonteck_mobile/screens/authentication/sign_in_page.dart';
+import 'package:ozonteck_mobile/screens/authentication/sign_up_page.dart';
 
 import '../../blocs/authentication_bloc/authentication_bloc.dart';
 import '../../blocs/sign_in_bloc/sign_in_bloc.dart';
 import '../../blocs/sign_up_bloc/sign_up_bloc.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin {
+class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
 	late TabController tabController;
 
 	@override
@@ -31,24 +31,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
 			backgroundColor: Theme.of(context).colorScheme.surface,
-			appBar: AppBar(
-				elevation: 0,
-				backgroundColor: Colors.transparent,
-			),
 			body: SingleChildScrollView(
 				child: SizedBox(
 					height: MediaQuery.of(context).size.height,
 					child: Padding(
-						padding: const EdgeInsets.symmetric(horizontal: 20),
+						padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
 						child: Column(
 							children: [
-								const Text(
-									'Welcome Back !',
-									style: TextStyle(
-										fontSize: 24,
-										fontWeight: FontWeight.bold
-									),
-								),
+                                  // LOGO
+								Image.network('https://firebasestorage.googleapis.com/v0/b/testing-ozt.appspot.com/o/icone.png?alt=media&token=cf61553b-eb76-4f9e-86dc-ba020c1bc6b4',
+                  width: 100,
+                  height: 100
+                ),
 								const SizedBox(height: kToolbarHeight),
 								TabBar(
 									controller: tabController,
@@ -83,13 +77,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 												create: (context) => SignInBloc(
 													userRepository: context.read<AuthenticationBloc>().userRepository
 												),
-												child: const SignInScreen(),
+												child: const SignInPage(),
 											),
 											BlocProvider<SignUpBloc>(
 												create: (context) => SignUpBloc(
 													userRepository: context.read<AuthenticationBloc>().userRepository
 												),
-												child: const SignUpScreen(),
+												child: const SignUpPage(),
 											),
 										]
 									),

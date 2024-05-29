@@ -1,3 +1,3 @@
-import 'package:product_repository/src/product_repo.dart';
+import 'package:product_repository/product_repository.dart';
 
-class FirebaseProductRepository implements ProductRepository{}
+class FirebaseProductRepository implements ProductRepository {}

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,25 +5,26 @@ import '../../blocs/sign_in_bloc/sign_in_bloc.dart';
 import '../../components/strings.dart';
 import '../../components/textfield.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   String? _errorMsg;
   bool obscurePassword = true;
-  IconData iconPassword = CupertinoIcons.eye_fill;
+  IconData iconPassword = Icons.visibility;
   bool signInRequired = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignInBloc, SignInState>(
+      
       listener: (context, state) {
         if(state is SignInSuccess) {
 					setState(() {
@@ -53,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     hintText: 'Email',
                     obscureText: false,
                     keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(CupertinoIcons.mail_solid),
+                    prefixIcon: const Icon(Icons.email),
                     errorMsg: _errorMsg,
                     validator: (val) {
                       if (val!.isEmpty) {
@@ -72,7 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   hintText: 'Password',
                   obscureText: obscurePassword,
                   keyboardType: TextInputType.visiblePassword,
-                  prefixIcon: const Icon(CupertinoIcons.lock_fill),
+                  prefixIcon: const Icon(Icons.lock),
                   errorMsg: _errorMsg,
                   validator: (val) {
                     if (val!.isEmpty) {
@@ -87,9 +87,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       setState(() {
                         obscurePassword = !obscurePassword;
                         if (obscurePassword) {
-                          iconPassword = CupertinoIcons.eye_fill;
+                          iconPassword = Icons.visibility_off_rounded;
                         } else {
-                          iconPassword = CupertinoIcons.eye_slash_fill;
+                          iconPassword = Icons.visibility;
                         }
                       });
                     },
@@ -100,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 20),
               !signInRequired
                   ? SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.5,
                       height: 50,
                       child: TextButton(
                           onPressed: () {
@@ -111,7 +111,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             }
                           },
                           style: TextButton.styleFrom(
-                              elevation: 3.0,
+                              elevation: 5.0,
                               backgroundColor:
                                   Theme.of(context).colorScheme.primary,
                               foregroundColor: Colors.white,

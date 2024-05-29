@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ozonteck_mobile/screens/authentication/welcome_screen.dart';
-
-import 'blocs/authentication_bloc/authentication_bloc.dart';
-import 'screens/home/home_screen.dart';
+import 'package:ozonteck_mobile/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
+import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
+import 'package:ozonteck_mobile/screens/home/home_screen.dart';
+import 'package:ozonteck_mobile/screens/authentication/welcome_page.dart';
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -11,30 +13,49 @@ class MyAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-			debugShowCheckedModeBanner: false,
-			title: 'InstaX',
-			theme: ThemeData(
+      debugShowCheckedModeBanner: false,
+      title: 'Ozone App',
+      theme: ThemeData(
         colorScheme: const ColorScheme.light(
           surface: Colors.white,
           onSurface: Colors.black,
-          primary: Color.fromRGBO(206, 147, 216, 1),
-          onPrimary: Colors.black,
-          secondary: Color.fromRGBO(244, 143, 177, 1),
-          onSecondary: Colors.white,
-					tertiary: Color.fromRGBO(255, 204, 128, 1),
+          primary: Color.fromRGBO(7, 24, 31, 1),
+          onPrimary: Color.fromRGBO(20, 60, 76, 1),
+          secondary: Color.fromRGBO(113, 202, 189, 1),
+          onSecondary: Color.fromRGBO(123, 242, 215, 1),
+          tertiary: Color.fromRGBO(173, 184, 194, 1),
+          onTertiary: Color.fromRGBO(215, 221, 226, 1),
+          outline: Color.fromRGBO(242, 249, 249, 1),
           error: Colors.red,
-					outline: Color(0xFF424242)
         ),
-			),
-			home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-				builder: (context, state) {
-					if(state.status == AuthenticationStatus.authenticated) {
-						return const HomeScreen(); 
+      ),
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state.status == AuthenticationStatus.authenticated) {
+            return MultiBlocProvider(providers: [
+              BlocProvider(
+                create: (context) => SignInBloc(
+                  userRepository: context.read<AuthenticationBloc>().userRepository
+                  ),
+              ),
+              
+              BlocProvider (
+                create: (context) => UpdateUserInfoBloc(
+                userRepository: context.read<AuthenticationBloc>().userRepository
+                ),
+              ),
+              BlocProvider(create: (context) => MyUserBloc(
+                myUserRepository: context.read<AuthenticationBloc>().userRepository
+                )..add(GetMyUser(
+                  myUserId: context.read<AuthenticationBloc>().state.user!.uid
+                )),
+              ),
+            ], child: const HomeScreen());
           } else {
-            return const WelcomeScreen();
+            return const WelcomePage();
           }
-        }
-      )
+        },
+      ) ,
     );
   }
 }
