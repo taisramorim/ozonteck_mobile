@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
+import 'package:ozonteck_mobile/screens/pages/balance_page.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class HomeScreen extends StatefulWidget {
                 centerTitle: false,
                 elevation: 0,
                 backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
                 title: BlocBuilder<MyUserBloc, MyUserState>(
                   builder: (context, state) {
                     if (state.status == MyUserStatus.success) {
@@ -127,7 +129,6 @@ class HomeScreen extends StatefulWidget {
                       context.read<SignInBloc>().add(const SignOutRequired());
                     },
                     icon: const Icon(Icons.logout),
-                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ],
               ),
@@ -154,17 +155,22 @@ class HomeScreen extends StatefulWidget {
                     // First 3 icons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: FloatingActionButton(
-                            onPressed: () {},
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            shape: const CircleBorder(),
-                            child: const Icon(Icons.wallet, color: Colors.white),
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const BalancePage()),
+                                );
+                              },
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              shape: const CircleBorder(),
+                              child: const Icon(Icons.wallet, color: Colors.white),
+                            ),
                           ),
-                        ),
                         SizedBox(
                           height: 100,
                           width: 100,
@@ -229,7 +235,8 @@ class HomeScreen extends StatefulWidget {
                 ),
               ),
             ),
-        );
-    }
-}
+    );
+  }
+    
+  }
   

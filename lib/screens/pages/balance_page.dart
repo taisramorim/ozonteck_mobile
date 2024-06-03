@@ -8,6 +8,8 @@ class BalancePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Balance'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
       body: const Center(
         child: Text('Balance Page'),
