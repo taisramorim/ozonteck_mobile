@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.0.4
-  image_cropper: ^5.0.0
+  image_cropper: ^6.0.0
 
   # Firebase
   firebase_core: ^2.31.1
@@ -29,7 +29,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

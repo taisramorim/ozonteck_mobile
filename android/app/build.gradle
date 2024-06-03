@@ -61,3 +61,10 @@ flutter {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
 }
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+    }
+}
+
