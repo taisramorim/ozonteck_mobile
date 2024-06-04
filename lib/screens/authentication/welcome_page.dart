@@ -38,7 +38,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 						padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
 						child: Column(
 							children: [
-                                  // LOGO
+                // LOGO
 								Image.network('https://firebasestorage.googleapis.com/v0/b/testing-ozt.appspot.com/o/icone.png?alt=media&token=cf61553b-eb76-4f9e-86dc-ba020c1bc6b4',
                   width: 100,
                   height: 100

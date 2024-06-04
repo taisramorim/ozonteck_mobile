@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
+import 'package:ozonteck_mobile/components/icons_home.dart';
 import 'package:ozonteck_mobile/components/score/pins_level.dart';
 import 'package:ozonteck_mobile/components/score/score_display.dart';
 import 'package:ozonteck_mobile/screens/pages/balance_page.dart';
@@ -15,7 +16,7 @@ import 'package:ozonteck_mobile/screens/pages/products_page.dart';
 import 'package:ozonteck_mobile/screens/pages/score_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -81,10 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         UploadPicture(
                                             croppedFile.path,
                                             context
-                                                .read<MyUserBloc>()
-                                                .state
-                                                .user!
-                                                .id));
+                                                .read<MyUserBloc>().state.user!.id));
                                   });
                                 }
                               }
@@ -137,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 tag: 'score',
                 child: SizedBox(
                   height: 150,
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
@@ -156,113 +154,62 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 100),
+              const SizedBox(height: 300),
               // First 3 icons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Hero(
-                    tag: 'balance',
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const BalancePage()),
-                          );
-                        },
-                        child: Material(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          child: const Icon(Icons.wallet, color: Colors.white),
-                        ),
-                      ),
-                    ),
+                  IconsHome(
+                    iconData: Icons.account_balance,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const BalancePage()),
+                      );
+                    }
                   ),
-                  Hero(
-                    tag: 'network',
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const NetworkPage()),
-                          );
-                        },
-                        child: Material(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          child: const Icon(Icons.people, color: Colors.white),
-                        ),
-                      ),
-                    ),
+                  IconsHome(
+                    iconData: Icons.people,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NetworkPage()),
+                      );
+                    }
                   ),
-                  Hero(
-                    tag: 'products',
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const ProductsPage()),
-                          );
-                        },
-                        child: Material(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          child: const Icon(Icons.scale, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
+                  IconsHome(
+                    iconData: Icons.heat_pump_rounded,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProductsPage()),
+                      );
+                    },
+                  )
                 ],
               ),
               const SizedBox(height: 50),
-              // Second 3 icons
+              // Second 2 icons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Hero(
-                    tag: 'orders',
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const OrdersPage()),
-                          );
-                        },
-                        child: Material(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          child: const Icon(Icons.shopping_bag, color: Colors.white),
-                        ),
-                      ),
-                    ),
+                  IconsHome(
+                    iconData: Icons.shopping_bag,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const OrdersPage()),
+                      );
+                    }
                   ),
-                  Hero(
-                    tag: 'location',
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Material(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          child: const Icon(Icons.location_city_rounded,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
+                  IconsHome(
+                    iconData: Icons.location_city,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NetworkPage()),
+                      );
+                    }
                   ),
                 ],
               ),
@@ -273,5 +220,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-                 

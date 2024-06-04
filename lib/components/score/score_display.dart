@@ -19,7 +19,7 @@ class ScoreDisplay extends StatelessWidget{
 
     return Container(
       height: 150,
-      width: 350,
+      width: MediaQuery.of(context).size.width * 0.8,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -34,7 +34,7 @@ class ScoreDisplay extends StatelessWidget{
             width: 70,
           ),
           const SizedBox(height: 20),
-          // Ponints and progress bar
+          // Points and progress bar
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
