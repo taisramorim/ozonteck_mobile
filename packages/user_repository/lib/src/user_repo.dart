@@ -18,4 +18,6 @@ abstract class UserRepository {
   Future<MyUser> getMyUser(String myUserId);
 
   Future<String> uploadPicture(String file, String userId);
+
+  Future<void> checkAndRequestPermission(String file, String userId);
 }
