@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 
 class FirebaseUserRepository implements UserRepository {
   FirebaseUserRepository({
@@ -120,25 +118,6 @@ class FirebaseUserRepository implements UserRepository {
     } catch (e) {
       log(e.toString());
       rethrow;
-    }
-  }
-  
- Future<void> checkAndRequestPermission(String file, String userId) async {
-    PermissionStatus cameraStatus = await Permission.camera.status;
-    PermissionStatus galleryStatus = await Permission.photos.status;
-
-    if (!cameraStatus.isGranted) {
-      cameraStatus = await Permission.camera.request();
-    }
-
-    if (!galleryStatus.isGranted) {
-      galleryStatus = await Permission.photos.request();
-    }
-
-    if (cameraStatus.isGranted && galleryStatus.isGranted) {
-      await uploadPicture(file, userId);
-    } else {
-      throw Exception('Permissões não concedidas');
     }
   }
 }

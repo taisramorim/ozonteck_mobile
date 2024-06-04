@@ -9,7 +9,9 @@ class OrdersPage extends StatelessWidget {
           appBar: AppBar(
             centerTitle: false,
             elevation: 0,
-            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
+            title: const Text('Orders Page'),
           ),
     );
   }

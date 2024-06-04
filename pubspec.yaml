@@ -26,9 +26,6 @@ dependencies:
   user_repository:
     path: packages/user_repository
 
-  # Camera permission
-  permission_handler: ^10.4.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
