@@ -6,6 +6,7 @@ class MyUser extends Equatable {
   final String email;
   final String name;
   String? picture;
+  bool hasActiveCart;
 
   MyUser({
     
@@ -13,6 +14,7 @@ class MyUser extends Equatable {
     required this.email,
     required this.name,
     this.picture,
+    required this.hasActiveCart
 
   });
 
@@ -22,6 +24,7 @@ class MyUser extends Equatable {
     email: '',
     name: '',
     picture: '',
+    hasActiveCart: false
 
   );
 // Modify MyUser parameters
@@ -36,6 +39,7 @@ class MyUser extends Equatable {
       email: email ?? this.email,
       name: name ?? this.name,
       picture: picture ?? this.picture,
+      hasActiveCart: hasActiveCart
     );
   }
 
@@ -51,6 +55,7 @@ class MyUser extends Equatable {
       email: email,
       name: name,
       picture: picture,
+      hasActiveCart: hasActiveCart
     );
   }
 
@@ -60,9 +65,14 @@ class MyUser extends Equatable {
       email: entity.email,
       name: entity.name,
       picture: entity.picture,
+      hasActiveCart: entity.hasActiveCart
     );
   }
 
   @override
   List<Object?> get props => [id, email, name, picture];
+
+  // @override
+  // String toString(){
+    // return 'MyUser: $id, $email, $name, $picture, $hasActiveCart'; }
 }
