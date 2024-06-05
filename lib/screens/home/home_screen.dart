@@ -9,11 +9,11 @@ import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_blo
 import 'package:ozonteck_mobile/components/icons_home.dart';
 import 'package:ozonteck_mobile/components/score/pins_level.dart';
 import 'package:ozonteck_mobile/components/score/score_display.dart';
-import 'package:ozonteck_mobile/screens/pages/balance_page.dart';
-import 'package:ozonteck_mobile/screens/pages/network_page.dart';
-import 'package:ozonteck_mobile/screens/pages/orders_page.dart';
-import 'package:ozonteck_mobile/screens/pages/products_page.dart';
-import 'package:ozonteck_mobile/screens/pages/score_page.dart';
+import 'package:ozonteck_mobile/screens/home/balance_page.dart';
+import 'package:ozonteck_mobile/screens/home/network_page.dart';
+import 'package:ozonteck_mobile/screens/home/orders_page.dart';
+import 'package:ozonteck_mobile/screens/home/products_page.dart';
+import 'package:ozonteck_mobile/screens/home/score_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -118,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
             IconButton(
               onPressed: () {
                 context.read<SignInBloc>().add(const SignOutRequired());
@@ -126,94 +127,96 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Ranking Container
-              Hero(
-                tag: 'score',
-                child: SizedBox(
-                  height: 150,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ScorePage()),
-                      );
-                    },
-                    child: Material(
-                      color: Theme.of(context).colorScheme.onTertiary,
-                      borderRadius: BorderRadius.circular(20),
-                      child: ScoreDisplay(
-                          currentPoints: 5000,
-                          nextLevelPoints: 15000,
-                          imageUrl: pinsLevelMapping[7].imageUrl),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Ranking Container
+                Hero(
+                  tag: 'score',
+                  child: SizedBox(
+                    height: 150,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ScorePage()),
+                        );
+                      },
+                      child: Material(
+                        color: Theme.of(context).colorScheme.onTertiary,
+                        borderRadius: BorderRadius.circular(20),
+                        child: ScoreDisplay(
+                            currentPoints: 5000,
+                            nextLevelPoints: 15000,
+                            imageUrl: pinsLevelMapping[7].imageUrl),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 300),
-              // First 3 icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconsHome(
-                    iconData: Icons.account_balance,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const BalancePage()),
-                      );
-                    }
-                  ),
-                  IconsHome(
-                    iconData: Icons.people,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NetworkPage()),
-                      );
-                    }
-                  ),
-                  IconsHome(
-                    iconData: Icons.heat_pump_rounded,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProductsPage()),
-                      );
-                    },
-                  )
-                ],
-              ),
-              const SizedBox(height: 50),
-              // Second 2 icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconsHome(
-                    iconData: Icons.shopping_bag,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const OrdersPage()),
-                      );
-                    }
-                  ),
-                  IconsHome(
-                    iconData: Icons.location_city,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NetworkPage()),
-                      );
-                    }
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 200),
+                // First 3 icons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconsHome(
+                      iconData: Icons.account_balance,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const BalancePage()),
+                        );
+                      }
+                    ),
+                    IconsHome(
+                      iconData: Icons.people,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                        );
+                      }
+                    ),
+                    IconsHome(
+                      iconData: Icons.heat_pump_rounded,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProductsPage()),
+                        );
+                      },
+                    )
+                  ],
+                ),
+                const SizedBox(height: 50),
+                // Second 2 icons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconsHome(
+                      iconData: Icons.shopping_bag,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const OrdersPage()),
+                        );
+                      }
+                    ),
+                    IconsHome(
+                      iconData: Icons.location_city,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                        );
+                      }
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -18,7 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   final passwordController = TextEditingController();
   String? _errorMsg;
   bool obscurePassword = true;
-  IconData iconPassword = Icons.visibility;
+  IconData iconPassword = Icons.visibility_off;
   bool signInRequired = false;
 
   @override
@@ -54,7 +54,6 @@ class _SignInPageState extends State<SignInPage> {
                     obscureText: false,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: const Icon(Icons.email),
-                    errorMsg: _errorMsg,
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'Please fill in this field';
@@ -87,7 +86,7 @@ class _SignInPageState extends State<SignInPage> {
                       setState(() {
                         obscurePassword = !obscurePassword;
                         if (obscurePassword) {
-                          iconPassword = Icons.visibility_off_rounded;
+                          iconPassword = Icons.visibility_off;
                         } else {
                           iconPassword = Icons.visibility;
                         }
@@ -132,7 +131,8 @@ class _SignInPageState extends State<SignInPage> {
                     )
                   : const CircularProgressIndicator()
             ],
-          )),
+          )
+        ),
     );
   }
 }
