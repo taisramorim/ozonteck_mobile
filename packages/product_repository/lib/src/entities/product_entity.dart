@@ -7,7 +7,6 @@ class ProductEntity{
   int discount;
   int stock;
   int rating;
-  int sold;
   String category;
 
   ProductEntity({
@@ -19,11 +18,10 @@ class ProductEntity{
     required this.discount,
     required this.stock,
     required this.rating,
-    required this.sold,
     required this.category,
   });
 
-  Map<String, dynamic> toDocument() {
+  Map<String, Object?> toDocument() {
     return {
       'productId': productId,
       'picture': picture,
@@ -33,7 +31,6 @@ class ProductEntity{
       'discount': discount,
       'stock': stock,
       'rating': rating,
-      'sold': sold,
       'category': category,
     };
   }
@@ -48,7 +45,6 @@ class ProductEntity{
       discount: doc['discount'],
       stock: doc['stock'],
       rating: doc['rating'],
-      sold: doc['sold'],
       category: doc['category'],
     );
   }

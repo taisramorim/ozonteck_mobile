@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:ozonteck_mobile/screens/home/network_page.dart';
 import 'package:ozonteck_mobile/screens/home/orders_page.dart';
 import 'package:ozonteck_mobile/screens/home/products_page.dart';
 import 'package:ozonteck_mobile/screens/home/score_page.dart';
+import 'package:product_repository/product_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -184,7 +186,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ProductsPage()),
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) => GetProductBloc(FirebaseProductRepository()
+                              )..add(GetProduct()),
+                              child: const ProductsPage(),
+                              )
+                            )
                         );
                       },
                     )

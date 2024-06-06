@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
 import 'package:ozonteck_mobile/screens/home/home_screen.dart';
 import 'package:ozonteck_mobile/screens/authentication/welcome_page.dart';
+import 'package:product_repository/product_repository.dart';
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -32,25 +34,26 @@ class MyAppView extends StatelessWidget {
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state.status == AuthenticationStatus.authenticated) {
-            return MultiBlocProvider(providers: [
-              BlocProvider(
-                create: (context) => SignInBloc(
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => SignInBloc(
+                    userRepository: context.read<AuthenticationBloc>().userRepository
+                    ),
+                ),
+                
+                BlocProvider (
+                  create: (context) => UpdateUserInfoBloc(
                   userRepository: context.read<AuthenticationBloc>().userRepository
                   ),
-              ),
-              
-              BlocProvider (
-                create: (context) => UpdateUserInfoBloc(
-                userRepository: context.read<AuthenticationBloc>().userRepository
                 ),
-              ),
-              BlocProvider(create: (context) => MyUserBloc(
-                myUserRepository: context.read<AuthenticationBloc>().userRepository
-                )..add(GetMyUser(
-                  myUserId: context.read<AuthenticationBloc>().state.user!.uid
-                )),
-              ),
-            ], child: const HomeScreen());
+                BlocProvider(create: (context) => MyUserBloc(
+                  myUserRepository: context.read<AuthenticationBloc>().userRepository
+                  )..add(GetMyUser(
+                    myUserId: context.read<AuthenticationBloc>().state.user!.uid
+                  )),
+                ),
+              ], child: const HomeScreen());
           } else {
             return const WelcomePage();
           }

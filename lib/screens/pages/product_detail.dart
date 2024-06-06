@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:product_repository/product_repository.dart';
 
 class ProductDetail extends StatelessWidget {
-  const ProductDetail({super.key});
+  final Product product;
+  const ProductDetail(this.product, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,9 @@ class ProductDetail extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                image: const DecorationImage(
-                  image: 
-                  AssetImage('assets/AMPOLA.png'),
-                  scale: 2.5,
+                image: DecorationImage(
+                  image: NetworkImage(
+                    product.picture),
                 ),
               ),
             ),
@@ -48,26 +48,26 @@ class ProductDetail extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           flex: 2,
                           child: Text(
-                            'Ampola Mágica Soft Hair Ozonizada Reconstrução 18ml',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold
+                              product.name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
                         ),
                         Expanded(
                         flex: 1,
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            '\$55.00',
-                            style: TextStyle(
+                            'R\$ ${product.price.toString()}',
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700
                               ),
@@ -99,7 +99,12 @@ class ProductDetail extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const Text('Ampola ozonizada de tratamento para cabelos ressecados, Soft Hair da OZONTECK oferece nutrição e hidratação intensa que dá brilho aos fios.'),
+                    Text(
+                        limitDescription(product.description),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),),
                     ElevatedButton(
                       onPressed: () {
                         showModalBottomSheet(
@@ -125,5 +130,10 @@ class ProductDetail extends StatelessWidget {
         ),
       ),      
     );
+  }
+  
+  String limitDescription(String description) {
+  int dotIndex = description.indexOf('.');
+  return dotIndex != -1 ? description.substring(0, dotIndex + 1) : description;
   }
 }
