@@ -12,10 +12,20 @@ class ProductsPage extends StatelessWidget {
             elevation: 0,
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
-            title: const Text('Products Page'),            
+            title: const Text('Products Page'),
+            actions: [
+              IconButton(
+                onPressed: () {}, 
+                icon: const Icon(Icons.search),
+              ),
+              IconButton(
+                onPressed: () {}, 
+                icon: const Icon(Icons.shopping_cart),
+              ),
+            ],            
           ),
           body: Padding(
-            padding: const EdgeInsets.all(6.0),
+            padding: const EdgeInsets.all(12.0),
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -63,16 +73,16 @@ class ProductsPage extends StatelessWidget {
                                 )
                               ],
                             ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
                           const Text(
-                            'Ampola Just making',
+                            'Ampola Just making a test',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                           const Text(
                             'Ampola ozonizada de tratamento para cabelos ressecados.',                       style: TextStyle(
                               fontSize: 14,
@@ -101,7 +111,7 @@ class ProductsPage extends StatelessWidget {
                               ),
                               IconButton(
                                 onPressed: () {}, 
-                                icon: const Icon(Icons.add_shopping_cart_outlined)),
+                                icon: const Icon(Icons.add_shopping_cart)),
                             ],
                           ),
                         ],
