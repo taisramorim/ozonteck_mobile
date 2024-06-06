@@ -9,7 +9,6 @@ class Product{
   int discount;
   int stock;
   int rating;
-  int sold;
   String category;
 
   Product({
@@ -21,7 +20,6 @@ class Product{
     required this.discount,
     required this.stock,
     required this.rating,
-    required this.sold,
     required this.category,
   });
 
@@ -35,7 +33,6 @@ class Product{
       discount: discount,
       stock: stock,
       rating: rating,
-      sold: sold,
       category: category,
     );
   }
@@ -50,7 +47,6 @@ class Product{
       discount: entity.discount,
       stock: entity.stock,
       rating: entity.rating,
-      sold: entity.sold,
       category: entity.category,
     );
   }

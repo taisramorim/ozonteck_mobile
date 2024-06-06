@@ -27,6 +27,8 @@ dependencies:
   # Custom Repository
   user_repository:
     path: packages/user_repository
+  product_repository:
+    path: packages/product_repository
 
 dev_dependencies:
   flutter_test:
