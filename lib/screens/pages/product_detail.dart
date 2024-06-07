@@ -1,4 +1,8 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ozonteck_mobile/blocs/cart_bloc/cart_bloc.dart';
 import 'package:product_repository/product_repository.dart';
 
 class ProductDetail extends StatelessWidget {
@@ -81,7 +85,9 @@ class ProductDetail extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.read<CartBloc>().add(AddToCart(product));
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.secondary,
                           shape: RoundedRectangleBorder(
@@ -113,7 +119,9 @@ class ProductDetail extends StatelessWidget {
                             height: 600, // Ajuste a altura do painel
                             padding: const EdgeInsets.all(16.0),
                             child: SingleChildScrollView(
-                              child: Text(product.description),
+                              child: Text(
+                                product.description,
+                              ),
                             ),
                           ),
                         );
