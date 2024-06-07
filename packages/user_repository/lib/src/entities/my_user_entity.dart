@@ -6,23 +6,13 @@ class MyUserEntity extends Equatable {
   final String name;
   final String? picture;
   bool hasActiveCart;
-  int cartId = 0;
-  double cartTotal = 0;
-  int cartQuantity = 0;
-  Map<String, int> personalStock;  
-  Map<String, DateTime> cart;
 
   MyUserEntity ({
     required this.id,
     required this.email,
     required this.name,
     this.picture,
-    required this.hasActiveCart,
-    this.cartId = 0,
-    this.cartTotal = 0,
-    this.cartQuantity = 0,
-    this.personalStock = const {},
-    this.cart = const {}
+    required this.hasActiveCart
   });
 
   Map<String, Object?> toDocument(){
@@ -31,12 +21,7 @@ class MyUserEntity extends Equatable {
       'email': email,
       'name': name,
       'picture': picture,
-      'hasActiveCart': hasActiveCart,
-      'cartId': cartId,
-      'cartTotal': cartTotal,
-      'cartQuantity': cartQuantity,
-      'personalStock': personalStock,
-      'cart': cart
+      'hasActiveCart': hasActiveCart
     };
   }
 
@@ -46,18 +31,13 @@ class MyUserEntity extends Equatable {
       email: doc['email'] as String,
       name: doc['name'] as String,
       picture: doc['picture'] as String?,
-      hasActiveCart: doc['hasActiveCart'] as bool,
-      cartId: doc['cartId'] as int,
-      cartTotal: doc['cartTotal'] as double,
-      cartQuantity: doc['cartQuantity'] as int,
-      personalStock: Map<String, int>.from(doc['personalStock'] as Map),
-      cart: Map<String, DateTime>.from(doc['cart'] as Map)
+      hasActiveCart: doc['hasActiveCart'] as bool
     );
   }
   
 
   @override
-  List<Object?> get props => [id, email, name, picture, hasActiveCart, cartId, cartTotal, cartQuantity, personalStock, cart];
+  List<Object?> get props => [id, email, name, picture, hasActiveCart];
 
   @override
   String toString(){
@@ -67,11 +47,6 @@ class MyUserEntity extends Equatable {
       name: $name
       picture: $picture
       hasActiveCart: $hasActiveCart
-      cartId: $cartId
-      cartTotal: $cartTotal
-      cartQuantity: $cartQuantity
-      personalStock: $personalStock
-      cart: $cart
     }''';
   }
 }

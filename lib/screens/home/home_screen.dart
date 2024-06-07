@@ -15,8 +15,6 @@ import 'package:ozonteck_mobile/screens/home/network_page.dart';
 import 'package:ozonteck_mobile/screens/home/orders_page.dart';
 import 'package:ozonteck_mobile/screens/home/products_page.dart';
 import 'package:ozonteck_mobile/screens/home/score_page.dart';
-import 'package:ozonteck_mobile/screens/home/stock_page.dart';
-import 'package:ozonteck_mobile/widgets/cart_icon.dart';
 import 'package:product_repository/product_repository.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -122,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            const CartIcon(),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
             IconButton(
               onPressed: () {
                 context.read<SignInBloc>().add(const SignOutRequired());
@@ -219,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const StockPage()),
+                          MaterialPageRoute(builder: (context) => NetworkPage()),
                         );
                       }
                     ),
