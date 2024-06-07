@@ -7,6 +7,11 @@ class MyUser extends Equatable {
   final String name;
   String? picture;
   bool hasActiveCart;
+  int cartId = 0;
+  double cartTotal = 0;
+  int cartQuantity = 0;
+  Map<String, int> personalStock;
+  Map<String, DateTime> cart;
 
   MyUser({
     
@@ -14,8 +19,12 @@ class MyUser extends Equatable {
     required this.email,
     required this.name,
     this.picture,
-    required this.hasActiveCart
-
+    required this.hasActiveCart,
+    this.cartId = 0,
+    this.cartTotal = 0,
+    this.cartQuantity = 0,
+    this.personalStock = const {},
+    this.cart = const {}
   });
 
   // Empty user which represents an unauthenticated user
@@ -24,7 +33,12 @@ class MyUser extends Equatable {
     email: '',
     name: '',
     picture: '',
-    hasActiveCart: false
+    hasActiveCart: false,
+    cartId: 0,
+    cartTotal: 0,
+    cartQuantity: 0,
+    personalStock: const {},
+    cart: const {}
 
   );
 // Modify MyUser parameters
@@ -33,13 +47,25 @@ class MyUser extends Equatable {
     String? email,
     String? name,
     String? picture,
+    bool? hasActiveCart,
+    int? cartId,
+    double? cartTotal,
+    int? cartQuantity,
+    Map<String, int>? personalStock,
+    Map<String, DateTime>? cart
+
   }) {
     return MyUser(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       picture: picture ?? this.picture,
-      hasActiveCart: hasActiveCart
+      hasActiveCart: hasActiveCart ?? this.hasActiveCart,
+      cartId: cartId ?? this.cartId,
+      cartTotal: cartTotal ?? this.cartTotal,
+      cartQuantity: cartQuantity ?? this.cartQuantity,
+      personalStock: personalStock ?? this.personalStock,
+      cart: cart ?? this.cart
     );
   }
 
@@ -55,7 +81,12 @@ class MyUser extends Equatable {
       email: email,
       name: name,
       picture: picture,
-      hasActiveCart: hasActiveCart
+      hasActiveCart: hasActiveCart,
+      cartId: cartId,
+      cartTotal: cartTotal,
+      cartQuantity: cartQuantity,
+      personalStock: personalStock,
+      cart: cart
     );
   }
 
@@ -65,14 +96,20 @@ class MyUser extends Equatable {
       email: entity.email,
       name: entity.name,
       picture: entity.picture,
-      hasActiveCart: entity.hasActiveCart
+      hasActiveCart: entity.hasActiveCart,
+      cartId: entity.cartId,
+      cartTotal: entity.cartTotal,
+      cartQuantity: entity.cartQuantity,
+      personalStock: entity.personalStock,
+      cart: entity.cart
     );
   }
 
   @override
-  List<Object?> get props => [id, email, name, picture];
+  List<Object?> get props => [id, email, name, picture, hasActiveCart, cartId, cartTotal, cartQuantity, personalStock, cart];
 
-  // @override
-  // String toString(){
-    // return 'MyUser: $id, $email, $name, $picture, $hasActiveCart'; }
+    @override
+  String toString() {
+    return 'MyUser(id: $id, email: $email, name: $name, picture: $picture, hasActiveCart: $hasActiveCart, cartId: $cartId, cartTotal: $cartTotal, cartQuantity: $cartQuantity, personalStock: $personalStock, cart: $cart)';
+  }
 }
