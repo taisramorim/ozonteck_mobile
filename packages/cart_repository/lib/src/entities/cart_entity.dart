@@ -1,17 +1,14 @@
-import 'package:cart_repository/src/entities/list_items_entity.dart';
 import 'package:product_repository/product_repository.dart';
 
 class CartEntity {
-  final String cartId;
+  final int cartId;
   final ProductEntity product;
   final int quantity;
-  final ListItemsEntity listItems;
 
   CartEntity({
     required this.cartId,
     required this.product,
     required this.quantity,
-    required this.listItems,
   });
 
   Map<String, dynamic> toDocument() {
@@ -19,7 +16,6 @@ class CartEntity {
       'cartId': cartId,
       'product': product.toDocument(),
       'quantity': quantity,
-      'listItems': listItems.toDocument(),
     };
   }
 
@@ -28,7 +24,6 @@ class CartEntity {
       cartId: doc['cartId'],
       product: ProductEntity.fromDocument(doc['product']),
       quantity: doc['quantity'],
-      listItems: ListItemsEntity.fromDocument(doc['listItems']),
     );
   }
 }
