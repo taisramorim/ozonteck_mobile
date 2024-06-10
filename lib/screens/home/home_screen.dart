@@ -64,14 +64,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ratioX: 1,
                                     ratioY: 1,
                                   ),
-                                  aspectRatioPresets: [
-                                    CropAspectRatioPreset.square
-                                  ],
                                   uiSettings: [
                                     AndroidUiSettings(
                                         toolbarTitle: 'Cropper',
                                         toolbarColor: Colors.black,
                                         toolbarWidgetColor: Colors.white,
+                                        aspectRatioPresets: [
+                                          CropAspectRatioPreset.square
+                                        ],
                                         initAspectRatio:
                                             CropAspectRatioPreset.original,
                                         lockAspectRatio: false),
