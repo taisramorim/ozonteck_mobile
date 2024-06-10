@@ -62,16 +62,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   sourcePath: image.path,
                                   aspectRatio: const CropAspectRatio(
                                     ratioX: 1,
-                                    ratioY: 1,
-                                  ),
-                                  aspectRatioPresets: [
-                                    CropAspectRatioPreset.square
-                                  ],
+                                    ratioY: 1
+                                  ),                                  
                                   uiSettings: [
                                     AndroidUiSettings(
                                         toolbarTitle: 'Cropper',
                                         toolbarColor: Colors.black,
                                         toolbarWidgetColor: Colors.white,
+                                        aspectRatioPresets: [
+                                          CropAspectRatioPreset.square
+                                        ],
                                         initAspectRatio:
                                             CropAspectRatioPreset.original,
                                         lockAspectRatio: false),
