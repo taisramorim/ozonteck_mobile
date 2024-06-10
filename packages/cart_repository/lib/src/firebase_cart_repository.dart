@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cart_repository/cart_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,7 +63,7 @@ class FirebaseCartRepository implements CartRepo {
       .collection('users')
       .doc(userId)
       .collection('cart')
-      .doc(item.cartId)
+      .doc(item.cartId.toString())
       .delete();
     } catch (e) {
       log('Failed to remove item from cart: ${e.toString()}');
