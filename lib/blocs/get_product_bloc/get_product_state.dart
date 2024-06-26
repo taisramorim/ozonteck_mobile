@@ -2,7 +2,7 @@ part of 'get_product_bloc.dart';
 
 abstract class GetProductState extends Equatable {
   const GetProductState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -10,17 +10,17 @@ abstract class GetProductState extends Equatable {
 class GetProductInitial extends GetProductState {}
 
 class GetProductLoading extends GetProductState {}
-class GetProductFailure extends GetProductState {}
-class GetProductSuccess extends GetProductState {
 
+class GetProductSuccess extends GetProductState {
   final List<Product> products;
-  
+
   const GetProductSuccess({required this.products});
-  
+
   @override
   List<Object> get props => [products];
 }
 
+class GetProductFailure extends GetProductState {}
 
 class UpdatePersonalStockSuccess extends GetProductState {
   final String productId;

@@ -55,9 +55,9 @@ class MyAppView extends StatelessWidget {
                     myUserId: context.read<AuthenticationBloc>().state.user!.uid,
                   )),
                 ),
-                BlocProvider(
+                BlocProvider<GetProductBloc>(
                   create: (context) => GetProductBloc(
-                    productRepository: RepositoryProvider.of<ProductRepository>(context),
+                    productRepository: context.read<ProductRepository>(),
                   )..add(LoadProduct()),
                 ),
                 BlocProvider(

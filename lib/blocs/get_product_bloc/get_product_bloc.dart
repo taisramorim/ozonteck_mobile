@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:product_repository/product_repository.dart';
@@ -17,8 +19,10 @@ class GetProductBloc extends Bloc<GetProductEvent, GetProductState> {
     emit(GetProductLoading());
     try {
       List<Product> products = await productRepository.getProducts();
+      log('Products fetched: ${products.length}');
       emit(GetProductSuccess(products: products));
     } catch (e) {
+      log('Error fetching products: $e');
       emit(GetProductFailure());
     }
   }

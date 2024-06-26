@@ -19,9 +19,9 @@ class MainApp extends StatelessWidget {
           create: (_) => AuthenticationBloc(myUserRepository: userRepository),
         ),
         RepositoryProvider<ProductRepository>(
-          create: (_) => FirebaseProductRepository(),
+          create: (context) => FirebaseProductRepository(),
         ),
-        RepositoryProvider<FirebaseCartRepository>(
+        RepositoryProvider<CartRepo>(
           create: (_) => FirebaseCartRepository(),
         ),
       ],
