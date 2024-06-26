@@ -6,17 +6,39 @@ part 'get_product_event.dart';
 part 'get_product_state.dart';
 
 class GetProductBloc extends Bloc<GetProductEvent, GetProductState> {
-  final ProductRepository _productRepository;
+  final ProductRepository productRepository;
 
-  GetProductBloc(this._productRepository) : super(GetProductInitial()) {
-    on<GetProduct>((event, emit) async {
-      emit(GetProductLoading());
-      try {
-        List<Product> products = await _productRepository.getProducts();
-        emit(GetProductSuccess(products));
-      } catch (e) {
-        emit(GetProductFailure());
-      }
-    });
+  GetProductBloc({required this.productRepository}) : super(GetProductInitial()) {
+    on<LoadProduct>(_onLoadProduct);
+    on<UpdatePersonalStock>(_onUpdatePersonalStock);
+  }
+
+  Future<void> _onLoadProduct(LoadProduct event, Emitter<GetProductState> emit) async {
+    emit(GetProductLoading());
+    try {
+      List<Product> products = await productRepository.getProducts();
+      emit(GetProductSuccess(products: products));
+    } catch (e) {
+      emit(GetProductFailure());
+    }
+  }
+
+  Future<void> _onUpdatePersonalStock(UpdatePersonalStock event, Emitter<GetProductState> emit) async {
+    try {
+      await productRepository.updatePersonalStock(event.productId, event.personalStock);
+      emit(UpdatePersonalStockSuccess(productId: event.productId, personalStock: event.personalStock));
+      await _reloadProducts(emit);
+    } catch (e) {
+      emit(UpdatePersonalStockFailure());
+    }
+  }
+
+  Future<void> _reloadProducts(Emitter<GetProductState> emit) async {
+    try {
+      List<Product> products = await productRepository.getProducts();
+      emit(GetProductSuccess(products: products));
+    } catch (e) {
+      emit(GetProductFailure());
+    }
   }
 }

@@ -188,8 +188,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => BlocProvider(
-                              create: (context) => GetProductBloc(FirebaseProductRepository()
-                              )..add(GetProduct()),
+                              create: (context) => GetProductBloc(
+                                productRepository: RepositoryProvider.of<ProductRepository>(context),
+                              )..add(LoadProduct()),
                               child: const ProductsPage(),
                               )
                             )

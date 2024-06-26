@@ -1,8 +1,10 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/app_view.dart';
 import 'package:ozonteck_mobile/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:product_repository/product_repository.dart';
 
 class MainApp extends StatelessWidget {
   final UserRepository userRepository;
@@ -13,11 +15,17 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthenticationBloc>
-        (create: (_) => AuthenticationBloc(
-          myUserRepository: userRepository),)
-      ], 
-      child: const MyAppView()
-      );
+        RepositoryProvider<AuthenticationBloc>(
+          create: (_) => AuthenticationBloc(myUserRepository: userRepository),
+        ),
+        RepositoryProvider<ProductRepository>(
+          create: (_) => FirebaseProductRepository(),
+        ),
+        RepositoryProvider<FirebaseCartRepository>(
+          create: (_) => FirebaseCartRepository(),
+        ),
+      ],
+      child: const MyAppView(),
+    );
   }
 }

@@ -5,14 +5,16 @@ class MyUserEntity extends Equatable {
   final String email;
   final String name;
   final String? picture;
-  bool hasActiveCart;
-
+  final int points;
+  final int level;
+  
   MyUserEntity ({
     required this.id,
     required this.email,
     required this.name,
     this.picture,
-    required this.hasActiveCart
+    required this.points,
+    required this.level,
   });
 
   Map<String, Object?> toDocument(){
@@ -21,7 +23,8 @@ class MyUserEntity extends Equatable {
       'email': email,
       'name': name,
       'picture': picture,
-      'hasActiveCart': hasActiveCart
+      'points': points,
+      'level': level,
     };
   }
 
@@ -31,13 +34,14 @@ class MyUserEntity extends Equatable {
       email: doc['email'] as String,
       name: doc['name'] as String,
       picture: doc['picture'] as String?,
-      hasActiveCart: doc['hasActiveCart'] as bool
+      points: doc['points'] as int,
+      level: doc['level'] as int,
     );
   }
   
 
   @override
-  List<Object?> get props => [id, email, name, picture, hasActiveCart];
+  List<Object?> get props => [id, email, name, picture, points, level];
 
   @override
   String toString(){
@@ -46,7 +50,8 @@ class MyUserEntity extends Equatable {
       email: $email
       name: $name
       picture: $picture
-      hasActiveCart: $hasActiveCart
+      points: $points
+      level: $level
     }''';
   }
 }

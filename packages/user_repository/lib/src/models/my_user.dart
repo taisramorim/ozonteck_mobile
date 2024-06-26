@@ -6,7 +6,8 @@ class MyUser extends Equatable {
   final String email;
   final String name;
   String? picture;
-  bool hasActiveCart;
+  final int points;
+  final int level;
 
   MyUser({
     
@@ -14,8 +15,8 @@ class MyUser extends Equatable {
     required this.email,
     required this.name,
     this.picture,
-    required this.hasActiveCart
-
+    required this.points,
+    required this.level,
   });
 
   // Empty user which represents an unauthenticated user
@@ -24,8 +25,8 @@ class MyUser extends Equatable {
     email: '',
     name: '',
     picture: '',
-    hasActiveCart: false
-
+    points: 0,
+    level: 0,
   );
 // Modify MyUser parameters
   MyUser copyWith({
@@ -33,14 +34,17 @@ class MyUser extends Equatable {
     String? email,
     String? name,
     String? picture,
+    int? points,
+    int? level,
   }) {
     return MyUser(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       picture: picture ?? this.picture,
-      hasActiveCart: hasActiveCart
-    );
+      points: points ?? this.points,
+      level: level ?? this.level,
+      );
   }
 
 // Convenience getter to determine whether the current user is empty.
@@ -55,7 +59,8 @@ class MyUser extends Equatable {
       email: email,
       name: name,
       picture: picture,
-      hasActiveCart: hasActiveCart
+      points: points,
+      level: level,
     );
   }
 
@@ -65,12 +70,13 @@ class MyUser extends Equatable {
       email: entity.email,
       name: entity.name,
       picture: entity.picture,
-      hasActiveCart: entity.hasActiveCart
+      points: entity.points,
+      level: entity.level,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, name, picture];
+  List<Object?> get props => [id, email, name, picture, points, level];
 
   // @override
   // String toString(){

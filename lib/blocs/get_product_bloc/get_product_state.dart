@@ -1,21 +1,35 @@
 part of 'get_product_bloc.dart';
 
-sealed class GetProductState extends Equatable {
+abstract class GetProductState extends Equatable {
   const GetProductState();
   
   @override
   List<Object> get props => [];
 }
 
-final class GetProductInitial extends GetProductState {}
+class GetProductInitial extends GetProductState {}
 
-final class GetProductLoading extends GetProductState {}
-final class GetProductFailure extends GetProductState {}
-final class GetProductSuccess extends GetProductState {
+class GetProductLoading extends GetProductState {}
+class GetProductFailure extends GetProductState {}
+class GetProductSuccess extends GetProductState {
+
   final List<Product> products;
   
-  const GetProductSuccess(this.products);
+  const GetProductSuccess({required this.products});
   
   @override
   List<Object> get props => [products];
 }
+
+
+class UpdatePersonalStockSuccess extends GetProductState {
+  final String productId;
+  final int personalStock;
+
+  const UpdatePersonalStockSuccess({required this.productId, required this.personalStock});
+
+  @override
+  List<Object> get props => [productId, personalStock];
+}
+
+class UpdatePersonalStockFailure extends GetProductState {}

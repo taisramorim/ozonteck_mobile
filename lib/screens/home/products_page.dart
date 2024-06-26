@@ -66,7 +66,7 @@ class ProductsPage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Image.network(
-                                product.picture,
+                                product.imageUrl,
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.contain,
@@ -107,18 +107,7 @@ class ProductsPage extends StatelessWidget {
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                                if (product.discount > 0) ...{
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    'R\$ ${(product.price + product.discount).toString()}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                },
+                                ),                                
                                 IconButton(
                                   onPressed: () {},
                                   icon: const Icon(Icons.add_shopping_cart),

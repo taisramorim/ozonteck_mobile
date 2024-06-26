@@ -27,7 +27,7 @@ class ProductDetail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                   image: NetworkImage(
-                    product.picture),
+                    product.imageUrl),
                 ),
               ),
             ),

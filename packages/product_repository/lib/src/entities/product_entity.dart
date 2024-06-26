@@ -1,51 +1,47 @@
 class ProductEntity{
-  String productId;
-  String picture;
-  String name;
-  String description;
-  int price;
-  int discount;
-  int stock;
-  int rating;
-  String category;
+  final String productId;
+  final String name;
+  final String description;
+  final double price;
+  final int points;
+  final String category;
+  final String imageUrl;
+  final int personalStock;
 
   ProductEntity({
     required this.productId,
-    required this.picture,
     required this.name,
     required this.description,
     required this.price,
-    required this.discount,
-    required this.stock,
-    required this.rating,
+    required this.points,
     required this.category,
+    required this.imageUrl,
+    required this.personalStock,
   });
 
   Map<String, Object?> toDocument() {
     return {
       'productId': productId,
-      'picture': picture,
       'name': name,
       'description': description,
       'price': price,
-      'discount': discount,
-      'stock': stock,
-      'rating': rating,
+      'points': points,
       'category': category,
+      'imageUrl': imageUrl,
+      'personalStock': personalStock,
     };
   }
 
   static ProductEntity fromDocument(Map<String, dynamic> doc) {
     return ProductEntity(
-      productId: doc['productId'],
-      picture: doc['picture'],
-      name: doc['name'],
-      description: doc['description'],
-      price: doc['price'],
-      discount: doc['discount'],
-      stock: doc['stock'],
-      rating: doc['rating'],
-      category: doc['category'],
+      productId: doc['productId'] as String,
+      name: doc['name'] as String,
+      description: doc['description'] as String,
+      price: doc['price'] as double,
+      points: doc['points'] as int,
+      category: doc['category'] as String,
+      imageUrl: doc['imageUrl'] as String,
+      personalStock: doc['personalStock'] as int,
     );
   }
 }

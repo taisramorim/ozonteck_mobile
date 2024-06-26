@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:product_repository/product_repository.dart';
@@ -15,7 +15,19 @@ class FirebaseProductRepository implements ProductRepository {
           Product.fromEntity(ProductEntity.fromDocument(e.data()))
         ).toList());
     } catch (e) {
-      log(e.toString() as num);
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updatePersonalStock(String productId, int personalStock) async {
+    try {
+      await productCollection.doc(productId).update({
+        'personalStock': personalStock,
+      });
+    } catch (e) {
+      log(e.toString());
       rethrow;
     }
   }
