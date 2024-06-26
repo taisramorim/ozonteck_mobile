@@ -3,10 +3,12 @@ import 'package:cart_repository/cart_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:product_repository/product_repository.dart';
 
+
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
+
   final FirebaseCartRepository _cartRepository;
   final String userId;
   
@@ -15,6 +17,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<RemoveFromCart>(_onRemoveFromCart);
     on<ClearCart>(_onClearCart);
     on<LoadCart>(_onLoadCart);
+
   }
 
   void _onLoadCart(LoadCart event, Emitter<CartState> emit) async {

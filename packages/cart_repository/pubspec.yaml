@@ -16,6 +16,9 @@ dependencies:
   product_repository:
     path: ../product_repository
 
+  product_repository:
+    path: ../product_repository
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

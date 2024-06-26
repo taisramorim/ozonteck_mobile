@@ -1,8 +1,10 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ozonteck_mobile/blocs/cart_bloc/cart_bloc.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -15,6 +17,7 @@ import 'package:ozonteck_mobile/screens/home/network_page.dart';
 import 'package:ozonteck_mobile/screens/home/orders_page.dart';
 import 'package:ozonteck_mobile/screens/home/products_page.dart';
 import 'package:ozonteck_mobile/screens/home/score_page.dart';
+import 'package:ozonteck_mobile/screens/pages/cart_page.dart';
 import 'package:product_repository/product_repository.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -120,7 +123,18 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+           IconButton(onPressed: () {              
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                      create: (context) => CartBloc(cartRepo: FirebaseCartRepository(userId: 'userId')
+                      ),
+                      child: const CartPage(),
+                      )
+                    )
+                );
+            }, icon: const Icon(Icons.shopping_cart)),
             IconButton(
               onPressed: () {
                 context.read<SignInBloc>().add(const SignOutRequired());

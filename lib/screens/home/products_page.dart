@@ -1,6 +1,9 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ozonteck_mobile/blocs/cart_bloc/cart_bloc.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
+import 'package:ozonteck_mobile/screens/pages/cart_page.dart';
 import 'package:ozonteck_mobile/screens/pages/product_detail.dart';
 
 class ProductsPage extends StatelessWidget {
@@ -79,22 +82,33 @@ class ProductsPage extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(30),
                               ),                              
+
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              product.name,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          height: 200,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: Image.network(
+                                  product.picture,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              limitDescription(product.description),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(height: 15),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 5),
@@ -117,23 +131,25 @@ class ProductsPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ),
-                  );
-                },
-              );
-            } else if (state is GetProductLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return const Center(child: Text('Error'));
-            }
-          },
+                    );
+                  },
+                );
+              } else if (state is GetProductLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return const Center(child: Text('Error'));
+              }
+            },
+          ),
         ),
       ),
     );
   }
-  
+
   String limitDescription(String description) {
-  int dotIndex = description.indexOf('.');
-  return dotIndex != -1 ? description.substring(0, dotIndex + 1) : description;
-}
+    int dotIndex = description.indexOf('.');
+    return dotIndex != -1
+        ? description.substring(0, dotIndex + 1)
+        : description;
+  }
 }
