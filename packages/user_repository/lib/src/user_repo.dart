@@ -19,8 +19,12 @@ abstract class UserRepository {
 
   Future<String> uploadPicture(String file, String userId);
   
-  Future<bool> checkRecruiterId(String recruiterId);
+  Future<bool> checkRecruiterUsername(String username);
 
-  Future<void> addUserWithRecruiter(MyUser user, String recruiterId);
+  Future<void> addUserWithRecruiter(MyUser user, String recruiterUsername);
+
+  Future<MyUser?> getUserByUsername(String username);
+
+  Future<void> addUserToRecruitedUsers(String recruiterUsername, String newUserId);
   
 }

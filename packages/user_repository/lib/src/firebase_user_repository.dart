@@ -111,38 +111,57 @@ class FirebaseUserRepository implements UserRepository {
     }
 
   @override
-  Future<bool> checkRecruiterId(String recruiterId) async {
-    if (recruiterId.isEmpty || recruiterId == 'none') {
-      return true;
+  Future<MyUser?> getUserByUsername(String username) async {
+    QuerySnapshot query = await usersCollection.where('username', isEqualTo: username).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      return MyUser.fromEntity(MyUserEntity.fromDocument(query.docs.first.data()! as Map<String, dynamic>));
     }
-    DocumentSnapshot doc = await usersCollection.doc(recruiterId).get();
-    return doc.exists;
+    return null;
   }
 
   @override
-  Future<void> addUserWithRecruiter(MyUser user, String recruiterId) async {
+    Future<bool> checkRecruiterUsername(String username) async {
+      MyUser? user = await getUserByUsername(username);
+      return user != null;
+    }
+
+  @override
+  Future<void> addUserToRecruitedUsers(String recruiterUsername, String newUserId) async {
+    MyUser? recruiter = await getUserByUsername(recruiterUsername);
+    if (recruiter != null) {
+      await usersCollection.doc(recruiter.id).update({
+        'recruitedUsers': FieldValue.arrayUnion([newUserId])
+      });
+    }
+  }
+
+  @override
+  Future<void> addUserWithRecruiter(MyUser user, String recruiterUsername) async {
     await setUserData(user);
-    if (recruiterId.isEmpty || recruiterId == 'none') {
+    if (recruiterUsername.isEmpty || recruiterUsername == 'none') {
       return;
     }
-    DocumentReference recruiterDoc = usersCollection.doc(recruiterId);
-    DocumentSnapshot recruiterSnapshot = await recruiterDoc.get();
-    MyUser recruiter = MyUser.fromEntity(MyUserEntity.fromDocument(recruiterSnapshot.data() as Map<String, dynamic>));
-    recruiter.recruitedUsers.add(user.id);
-    recruiter.earnings += 10;
-    recruiter.points += 10;
-    await recruiterDoc.update(recruiter.toEntity().toDocument());
+    
+    await addUserToRecruitedUsers(recruiterUsername, user.id);
 
     // Update earnings and points for upper levels
-    QuerySnapshot userSnapshot = await usersCollection.get();
-    List<MyUser> users = userSnapshot.docs.map((doc) {
-      return MyUser.fromEntity(MyUserEntity.fromDocument(doc.data() as Map<String, dynamic>));
-    }).toList();
-    for (var u in users) {
-      if (u.recruitedUsers.contains(recruiterId)) {
-        u.earnings += 5;
-        u.points += 5;
-        await usersCollection.doc(u.id).update(u.toEntity().toDocument());
+    MyUser? recruiter = await getUserByUsername(recruiterUsername);
+    if (recruiter != null) {
+      recruiter.earnings += 10;
+      recruiter.points += 10;
+      await usersCollection.doc(recruiter.id).update(recruiter.toEntity().toDocument());
+
+      // Recursively update points and earnings for upper levels
+      QuerySnapshot userSnapshot = await usersCollection.get();
+      List<MyUser> users = userSnapshot.docs.map((doc) {
+        return MyUser.fromEntity(MyUserEntity.fromDocument(doc.data() as Map<String, dynamic>));
+      }).toList();
+      for (var u in users) {
+        if (u.recruitedUsers.contains(recruiter.id)) {
+          u.earnings += 5;
+          u.points += 5;
+          await usersCollection.doc(u.id).update(u.toEntity().toDocument());
+        }
       }
     }
   }

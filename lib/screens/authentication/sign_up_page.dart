@@ -39,12 +39,12 @@ class _SignUpPageState extends State<SignUpPage> {
         id: '',
         email: emailController.text,
         name: nameController.text,
-        username: emailController.text,
+        username: usernameController.text,
       );
       final password = passwordController.text;
-      final recruiterId = recruiterIdController.text;
+      final recruiterUsername = recruiterIdController.text;
       
-      BlocProvider.of<SignUpBloc>(context).add(SignUpRequired(user, password, recruiterId));
+      BlocProvider.of<SignUpBloc>(context).add(SignUpRequired(user, password, recruiterUsername));
     }
   }
 
@@ -235,6 +235,25 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: MyTextField(
                   controller: nameController, 
                   hintText: 'Nome', 
+                  obscureText: false, 
+                  keyboardType: TextInputType.name,
+                  prefixIcon: const Icon(Icons.person),
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Por favor, preencha esse campo';
+                    } else if (val.length > 30) {
+                      return 'Nome muito grande';
+                    }
+                    return null;
+                  }
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: MyTextField(
+                  controller: usernameController, 
+                  hintText: 'Username', 
                   obscureText: false, 
                   keyboardType: TextInputType.name,
                   prefixIcon: const Icon(Icons.person),

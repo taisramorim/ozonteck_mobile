@@ -10,10 +10,10 @@ abstract class SignUpEvent extends Equatable {
 class SignUpRequired extends SignUpEvent {
   final MyUser user;
   final String password;
-  final String recruiterId;
+  final String recruiterUsername;
 
-  const SignUpRequired(this.user, this.password, this.recruiterId);
+  const SignUpRequired(this.user, this.password, this.recruiterUsername);
 
   @override
-  List<Object> get props => [user, password, recruiterId];
+  List<Object> get props => [user, password, recruiterUsername];
 }
