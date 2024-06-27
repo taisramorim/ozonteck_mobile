@@ -15,11 +15,16 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<SignUpRequired>((event, emit) async {
       emit(SignUpProcess());
       try {
+        bool recruiterExists = await _userRepository.checkRecruiterId(event.recruiterId);
+        if (!recruiterExists) {
+          emit(SignUpFailure('Invalid recruiter ID'));
+          return;
+        }
         MyUser user = await _userRepository.signUp(event.user, event.password);
-        await _userRepository.setUserData(user);
+        await _userRepository.addUserWithRecruiter(user, event.recruiterId);
         emit(SignUpSuccess());
       } catch (e) {
-        emit(SignUpFailure());
+        emit(SignUpFailure(e.toString()));
       }
     });
   }

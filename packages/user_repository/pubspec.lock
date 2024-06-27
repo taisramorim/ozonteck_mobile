@@ -25,6 +25,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  cart_repository:
+    dependency: "direct main"
+    description:
+      path: "../cart_repository"
+      relative: true
+    source: path
+    version: "0.1.0"
   characters:
     dependency: transitive
     description:
@@ -312,6 +319,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  product_repository:
+    dependency: transitive
+    description:
+      path: "../product_repository"
+      relative: true
+    source: path
+    version: "0.1.0"
   sky_engine:
     dependency: transitive
     description: flutter

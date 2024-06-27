@@ -16,9 +16,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final recruiterIdController = TextEditingController();
+  final usernameController = TextEditingController();
+  bool isLoading = false;
   bool obscurePassword = true;
   IconData iconPassword = Icons.visibility_off;
-  final nameController = TextEditingController();
   bool signUpRequired = false;
 
   bool containsUpperCase = false;
@@ -27,6 +30,24 @@ class _SignUpPageState extends State<SignUpPage> {
   bool containsSpecialChar = false;
   bool containsLength = false;
 
+  Future<void> _signup() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      final user = MyUser(
+        id: '',
+        email: emailController.text,
+        name: nameController.text,
+        username: emailController.text,
+      );
+      final password = passwordController.text;
+      final recruiterId = recruiterIdController.text;
+      
+      BlocProvider.of<SignUpBloc>(context).add(SignUpRequired(user, password, recruiterId));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
@@ -34,15 +55,21 @@ class _SignUpPageState extends State<SignUpPage> {
         if(state is SignUpSuccess) {
           setState(() {
             signUpRequired = false;
+            isLoading = false;
           });
         } else if(state is SignUpProcess) {
           setState(() {
             signUpRequired = true;
           });
         } else if( state is SignUpFailure) {
-          return;
-        }
-      },
+            setState(() {
+              isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
       child: Form(
         key: _formKey,
         child: Center(
@@ -221,27 +248,26 @@ class _SignUpPageState extends State<SignUpPage> {
                   }
                 ),
               ),
+              const SizedBox(height: 10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: MyTextField(
+                    controller: recruiterIdController, 
+                    hintText: 'Recruiter ID (optional for first user)', 
+                    obscureText: false, 
+                    keyboardType: TextInputType.text,
+                    prefixIcon: const Icon(Icons.person_add),
+                    validator: (val) {
+                      return null;
+                    }
+                  ),
+                ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               !signUpRequired
                 ? SizedBox(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child:  TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        MyUser myUser = MyUser.empty;
-                        myUser = myUser.copyWith(
-                          email: emailController.text,
-                          name: nameController.text,
-                        );
-                        setState(() {
-                          context.read<SignUpBloc>().add(
-                            SignUpRequired(
-                              myUser,
-                              passwordController.text
-                            )
-                          );
-                        });
-                      }
+                    onPressed: () {_signup();
                     },
                     style: TextButton.styleFrom(
                       elevation: 3,

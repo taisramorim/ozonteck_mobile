@@ -19,6 +19,9 @@ dependencies:
   # Camera permission
   permission_handler: ^10.4.0
 
+  cart_repository:
+    path: ../cart_repository
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -13,10 +13,6 @@ class FirebaseUserRepository implements UserRepository {
  
   final FirebaseAuth _firebaseAuth;
   final usersCollection = FirebaseFirestore.instance.collection('users');
-
-  // Stream of [MyUser] which will emit the current user when
-  // the authentication state changes
-  // Emit [MyUser.empty] if the user is not authenticated
   
   @override
   Stream<User?> get user {
@@ -32,15 +28,13 @@ class FirebaseUserRepository implements UserRepository {
       UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
         email: myUser.email, 
         password: password
-        );
-        myUser = myUser.copyWith(
-          id: user.user!.uid,        
-          );
-          return myUser;
+      );
+      myUser = myUser.copyWith(id: user.user!.uid);
+      return myUser;
     } catch (e) {
       log(e.toString());
       rethrow;
-      }
+    }
   }
   
   @override
@@ -101,23 +95,55 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<String> uploadPicture(String file, String userId) async {
-    try {
-      File imageFile = File(file);
-      Reference firebaseStoreRef = FirebaseStorage
-        .instance
-        .ref()
-        .child('$userId/PP/${userId}_lead');
-      await firebaseStoreRef.putFile(imageFile
-      );
-      String url = await firebaseStoreRef.getDownloadURL();
-      await usersCollection
-        .doc(userId)
-        .update({'picture': url});
-      return url;
-    } catch (e) {
-      log(e.toString());
-      rethrow;
+    Future<String> uploadPicture(String filePath, String userId) async {
+      try {
+        File imageFile = File(filePath);
+        Reference firebaseStoreRef = FirebaseStorage.instance.ref().child('$userId/PP/${userId}_lead');
+        await firebaseStoreRef.putFile(imageFile);
+        String url = await firebaseStoreRef.getDownloadURL();
+        await FirebaseFirestore.instance.collection('users').doc(userId).update({'picture': url});
+
+        return url;
+      } catch (e) {
+        log('Error uploading picture: $e');
+        rethrow;
+      }
+    }
+
+  @override
+  Future<bool> checkRecruiterId(String recruiterId) async {
+    if (recruiterId.isEmpty || recruiterId == 'none') {
+      return true;
+    }
+    DocumentSnapshot doc = await usersCollection.doc(recruiterId).get();
+    return doc.exists;
+  }
+
+  @override
+  Future<void> addUserWithRecruiter(MyUser user, String recruiterId) async {
+    await setUserData(user);
+    if (recruiterId.isEmpty || recruiterId == 'none') {
+      return;
+    }
+    DocumentReference recruiterDoc = usersCollection.doc(recruiterId);
+    DocumentSnapshot recruiterSnapshot = await recruiterDoc.get();
+    MyUser recruiter = MyUser.fromEntity(MyUserEntity.fromDocument(recruiterSnapshot.data() as Map<String, dynamic>));
+    recruiter.recruitedUsers.add(user.id);
+    recruiter.earnings += 10;
+    recruiter.points += 10;
+    await recruiterDoc.update(recruiter.toEntity().toDocument());
+
+    // Update earnings and points for upper levels
+    QuerySnapshot userSnapshot = await usersCollection.get();
+    List<MyUser> users = userSnapshot.docs.map((doc) {
+      return MyUser.fromEntity(MyUserEntity.fromDocument(doc.data() as Map<String, dynamic>));
+    }).toList();
+    for (var u in users) {
+      if (u.recruitedUsers.contains(recruiterId)) {
+        u.earnings += 5;
+        u.points += 5;
+        await usersCollection.doc(u.id).update(u.toEntity().toDocument());
+      }
     }
   }
 }
