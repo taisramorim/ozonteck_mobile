@@ -29,7 +29,9 @@ class FirebaseUserRepository implements UserRepository {
         email: myUser.email, 
         password: password
       );
-      myUser = myUser.copyWith(id: user.user!.uid);
+      String userId = user.user!.uid;
+      myUser = myUser.copyWith(id: userId);
+      await setUserData(myUser);
       return myUser;
     } catch (e) {
       log(e.toString());
@@ -127,6 +129,9 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Future<void> addUserToRecruitedUsers(String recruiterUsername, String newUserId) async {
+    if (recruiterUsername.isEmpty) {
+      throw Exception("Recruiter username cannot be empty");
+    }
     MyUser? recruiter = await getUserByUsername(recruiterUsername);
     if (recruiter != null) {
       await usersCollection.doc(recruiter.id).update({
@@ -164,5 +169,23 @@ class FirebaseUserRepository implements UserRepository {
         }
       }
     }
+  }
+
+  @override
+  Future<List<MyUser>> getUserNetwork(String userId) async {
+    if (userId.isEmpty) {
+      throw Exception("User ID cannot be empty");
+    }
+    
+    List<MyUser> network = [];
+    MyUser? user = await getMyUser(userId);
+
+    for (String recruitId in user.recruitedUsers) {
+      MyUser? recruit = await getMyUser(recruitId);
+      network.add(recruit);
+      network.addAll(await getUserNetwork(recruit.id));
+        }
+  
+    return network;
   }
 }

@@ -26,5 +26,7 @@ abstract class UserRepository {
   Future<MyUser?> getUserByUsername(String username);
 
   Future<void> addUserToRecruitedUsers(String recruiterUsername, String newUserId);
+
+  Future<List<MyUser>> getUserNetwork(String userId);
   
 }

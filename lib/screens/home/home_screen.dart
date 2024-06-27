@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                          MaterialPageRoute(builder: (context) => NetworkPage(userId: '',)),
                         );
                       }
                     ),
@@ -218,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                          MaterialPageRoute(builder: (context) => NetworkPage(userId: '',)),
                         );
                       }
                     ),
