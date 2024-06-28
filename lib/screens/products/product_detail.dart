@@ -16,7 +16,7 @@ class ProductDetail extends StatelessWidget {
         title: const Text('Product Detail'),            
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(40),
         child: Column(
           children: [
             Container(

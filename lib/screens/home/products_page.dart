@@ -1,8 +1,8 @@
-// products_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
-import 'package:ozonteck_mobile/screens/pages/product_detail.dart';
+import 'package:ozonteck_mobile/screens/products/product_detail.dart';
+import 'package:ozonteck_mobile/screens/products/product_search.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -14,7 +14,7 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   
-  final TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedCategory = 'All';
 
@@ -30,9 +30,7 @@ class _ProductsPageState extends State<ProductsPage> {
         actions: [
           IconButton(
             onPressed: () {
-              setState(() {
-                _searchQuery = _searchController.text;
-              });
+              showSearch(context: context, delegate: ProductSearch());
             },
             icon: const Icon(Icons.search),
           ),
@@ -140,7 +138,7 @@ class _ProductsPageState extends State<ProductsPage> {
                                       ),
                                       IconButton(
                                         onPressed: () {},
-                                        icon: const Icon(Icons.add_shopping_cart),
+                                        icon: const Icon(Icons.shopping_cart_outlined),
                                       ),
                                     ],
                                   ),
@@ -173,8 +171,15 @@ class _ProductsPageState extends State<ProductsPage> {
       child: Row(
         children: categories.map((category) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: ChoiceChip(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              selectedColor: Theme.of(context).colorScheme.tertiary,
+              labelStyle: TextStyle(
+                color: _selectedCategory == category ? Colors.white : Theme.of(context).colorScheme.onPrimary,
+              ),
               label: Text(category),
               selected: _selectedCategory == category,
               onSelected: (isSelected) {

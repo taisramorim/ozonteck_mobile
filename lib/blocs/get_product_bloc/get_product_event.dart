@@ -9,12 +9,12 @@ abstract class GetProductEvent extends Equatable {
 
 class LoadProduct extends GetProductEvent {}
 
-class UpdatePersonalStock extends GetProductEvent {
+class UpdateProductStock extends GetProductEvent {
   final String productId;
-  final int personalStock;
+  final int stock;
 
-  const UpdatePersonalStock({required this.productId, required this.personalStock});
+  const UpdateProductStock({required this.productId, required this.stock});
 
   @override
-  List<Object> get props => [productId, personalStock];
+  List<Object> get props => [productId, stock];
 }

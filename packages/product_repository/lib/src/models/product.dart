@@ -31,7 +31,7 @@ class Product {
       points: points,
       category: category,
       imageUrl: imageUrl,
-     stock:stock,
+      stock:stock,
     );
   }
 
@@ -44,20 +44,7 @@ class Product {
       points: entity.points,
       category: entity.category,
       imageUrl: entity.imageUrl,
-     stock: entity.stock,
-    );
-  }
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      productId: json['productId'] as String? ?? '',
-      name: json['name'] as String? ?? 'Unnamed Product',
-      description: json['description'] as String? ?? 'No description',
-      price: (json['price'] as num?)?.toInt() ?? 0,
-      points: (json['points'] as num?)?.toInt() ?? 0,
-      category: json['category'] as String? ?? 'Uncategorized',
-      imageUrl: json['imageUrl'] as String? ?? '',
-     stock: (json['stock'] as num?)?.toInt() ?? 0,
+      stock: entity.stock,
     );
   }
 }

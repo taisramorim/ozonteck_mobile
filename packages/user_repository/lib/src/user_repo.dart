@@ -30,5 +30,7 @@ abstract class UserRepository {
   Future<List<MyUser>> getUserNetwork(String userId);
 
   Future<List<MyUser>> getRecruitedUsers(String userId);
+
+  Future<void> updateUserPoints(String userId, int pointsToAdd);
   
 }

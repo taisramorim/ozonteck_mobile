@@ -219,7 +219,7 @@ class FirebaseUserRepository implements UserRepository {
     }
   }
 
-    @override
+  @override
   Future<List<MyUser>> getRecruitedUsers(String userId) async {
     try {
       if (userId.isEmpty) {
@@ -234,6 +234,18 @@ class FirebaseUserRepository implements UserRepository {
       }
 
       return recruitedUsers;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUserPoints(String userId, int pointsToAdd) async {
+    try {
+      usersCollection.doc(userId).update({
+        'points': FieldValue.increment(pointsToAdd),
+      });
     } catch (e) {
       log(e.toString());
       rethrow;

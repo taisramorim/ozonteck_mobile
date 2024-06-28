@@ -22,14 +22,21 @@ class FirebaseProductRepository implements ProductRepository {
   }
 
   @override
-  Future<void> updatePersonalStock(String productId, int personalStock) async {
+  Future<void> updateProductStock(String productId, int stock) async {
     try {
       await productCollection.doc(productId).update({
-        'personalStock': personalStock,
+        'stock': stock,
       });
     } catch (e) {
       log(e.toString());
       rethrow;
     }
+  }
+
+  @override
+  Future<int> fetchProductPoints(String productId) async {
+    final productSnapshot = await productCollection.doc(productId).get();
+    final productData = productSnapshot.data() as Map<String, dynamic>;
+    return productData['points'] as int;
   }
 }

@@ -10,7 +10,7 @@ class GetProductBloc extends Bloc<GetProductEvent, GetProductState> {
 
   GetProductBloc({required this.productRepository}) : super(GetProductInitial()) {
     on<LoadProduct>(_onLoadProduct);
-    on<UpdatePersonalStock>(_onUpdatePersonalStock);
+    on<UpdateProductStock>(_onUpdatePersonalStock);
   }
 
   Future<void> _onLoadProduct(LoadProduct event, Emitter<GetProductState> emit) async {
@@ -23,13 +23,13 @@ class GetProductBloc extends Bloc<GetProductEvent, GetProductState> {
     }
   }
 
-  Future<void> _onUpdatePersonalStock(UpdatePersonalStock event, Emitter<GetProductState> emit) async {
+  Future<void> _onUpdatePersonalStock(UpdateProductStock event, Emitter<GetProductState> emit) async {
     try {
-      await productRepository.updatePersonalStock(event.productId, event.personalStock);
-      emit(UpdatePersonalStockSuccess(productId: event.productId, personalStock: event.personalStock));
+      await productRepository.updateProductStock(event.productId, event.stock);
+      emit(UpdateProductStockSuccess(productId: event.productId, stock: event.stock));
       await _reloadProducts(emit);
     } catch (e) {
-      emit(UpdatePersonalStockFailure());
+      emit(UpdateProductStockFailure());
     }
   }
 

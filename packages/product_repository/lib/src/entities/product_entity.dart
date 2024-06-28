@@ -29,20 +29,20 @@ class ProductEntity {
       'points': points,
       'category': category,
       'imageUrl': imageUrl,
-      'stock':stock,
+      'stock': stock,
     };
   }
 
   static ProductEntity fromDocument(Map<String, dynamic> doc) {
     return ProductEntity(
-      productId: doc['productId'] as String? ?? '',
-      name: doc['name'] as String? ?? 'Unnamed Product',
-      description: doc['description'] as String? ?? 'No description',
-      price: (doc['price'] as num?)?.toInt() ?? 0,
-      points: (doc['points'] as num?)?.toInt() ?? 0,
-      category: doc['category'] as String? ?? 'Uncategorized',
-      imageUrl: doc['imageUrl'] as String? ?? '',
-     stock: (doc['stock'] as num?)?.toInt() ?? 0,
+      productId: doc['productId'] as String,
+      name: doc['name'] as String,
+      description: doc['description'] as String,
+      price: doc['price'] as int,
+      points: doc['points'] as int,
+      category: doc['category'] as String,
+      imageUrl: doc['imageUrl'] as String,
+      stock: doc['stock'] as int,
     );
   }
 }
