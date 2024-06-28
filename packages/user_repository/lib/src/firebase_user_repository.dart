@@ -187,6 +187,27 @@ class FirebaseUserRepository implements UserRepository {
             u.earnings += 5;
             u.points += 5;
             await usersCollection.doc(u.id).update(u.toEntity().toDocument());
+            for (var v in users) {
+              if (v.recruitedUsers.contains(u.id)) {
+                v.earnings += 3;
+                v.points += 3;
+                await usersCollection.doc(v.id).update(v.toEntity().toDocument());
+                for (var w in users) {
+                  if (w.recruitedUsers.contains(v.id)) {
+                    w.earnings += 2;
+                    w.points += 2;
+                    await usersCollection.doc(w.id).update(w.toEntity().toDocument());
+                    for (var x in users) {
+                      if (x.recruitedUsers.contains(w.id)) {
+                        x.earnings += 1;
+                        x.points += 1;
+                        await usersCollection.doc(x.id).update(x.toEntity().toDocument());
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

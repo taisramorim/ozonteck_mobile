@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                     const SizedBox(width: 15),
                     Text(
-                      "Welcome ${state.user!.name}",
+                      "Hello ${state.user!.name}",
                       style: const TextStyle(color: Colors.white),
                     )
                   ],
