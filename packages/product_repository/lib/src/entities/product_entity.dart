@@ -7,7 +7,7 @@ class ProductEntity {
   final int points;
   final String category;
   final String imageUrl;
-  final int personalStock;
+  final int stock;
 
   ProductEntity({
     required this.productId,
@@ -17,7 +17,7 @@ class ProductEntity {
     required this.points,
     required this.category,
     required this.imageUrl,
-    required this.personalStock,
+    required this.stock,
   });
 
   Map<String, Object?> toDocument() {
@@ -29,7 +29,7 @@ class ProductEntity {
       'points': points,
       'category': category,
       'imageUrl': imageUrl,
-      'personalStock': personalStock,
+      'stock':stock,
     };
   }
 
@@ -42,7 +42,7 @@ class ProductEntity {
       points: (doc['points'] as num?)?.toInt() ?? 0,
       category: doc['category'] as String? ?? 'Uncategorized',
       imageUrl: doc['imageUrl'] as String? ?? '',
-      personalStock: (doc['personalStock'] as num?)?.toInt() ?? 0,
+     stock: (doc['stock'] as num?)?.toInt() ?? 0,
     );
   }
 }

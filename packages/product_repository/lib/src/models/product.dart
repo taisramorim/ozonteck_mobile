@@ -9,7 +9,7 @@ class Product {
   final int points;
   final String category;
   final String imageUrl;
-  final int personalStock;
+  final int stock;
 
   Product({
     required this.productId,
@@ -19,7 +19,7 @@ class Product {
     required this.points,
     required this.category,
     required this.imageUrl,
-    required this.personalStock,
+    required this.stock,
   });
 
   ProductEntity toEntity() {
@@ -31,7 +31,7 @@ class Product {
       points: points,
       category: category,
       imageUrl: imageUrl,
-      personalStock: personalStock,
+     stock:stock,
     );
   }
 
@@ -44,7 +44,7 @@ class Product {
       points: entity.points,
       category: entity.category,
       imageUrl: entity.imageUrl,
-      personalStock: entity.personalStock,
+     stock: entity.stock,
     );
   }
 
@@ -57,7 +57,7 @@ class Product {
       points: (json['points'] as num?)?.toInt() ?? 0,
       category: json['category'] as String? ?? 'Uncategorized',
       imageUrl: json['imageUrl'] as String? ?? '',
-      personalStock: (json['personalStock'] as num?)?.toInt() ?? 0,
+     stock: (json['stock'] as num?)?.toInt() ?? 0,
     );
   }
 }

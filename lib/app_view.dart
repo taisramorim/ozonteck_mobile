@@ -30,8 +30,7 @@ class MyAppView extends StatelessWidget {
           tertiary: Color.fromRGBO(173, 184, 194, 1),
           onTertiary: Color.fromRGBO(215, 221, 226, 1),
           outline: Color.fromRGBO(242, 249, 249, 1),
-          error: Colors.red,
-        ),
+          error: Colors.red),
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
