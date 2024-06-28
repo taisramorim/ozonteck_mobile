@@ -1,38 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:user_repository/user_repository.dart';
 
 class NetworkPage extends StatelessWidget {
-  // Sample data for demonstration purposes
-  final List<NetworkUser> users = [
-    NetworkUser(
-      name: 'John Doe',
-      rank: 'Jasper',
-      pictureUrl: 'https://source.unsplash.com/random/',
-      nickname: 'JD',
-      dateJoined: DateTime.now(),
-    ),
-    NetworkUser(
-      name: 'Jane Doe',
-      rank: 'Dream Red',
-      pictureUrl: 'https://source.unsplash.com/random/',
-      nickname: 'Jane',
-      dateJoined: DateTime.now(),
-    ),
-    NetworkUser(
-      name: 'Alice',
-      rank: 'Jade',
-      pictureUrl: 'https://source.unsplash.com/random/',
-      nickname: 'Alice',
-      dateJoined: DateTime.now(),
-    ),];
+  final String userId;
 
-  NetworkPage({super.key});
+  const NetworkPage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    final totalConnections = calculateTotalConnections(users); // Calculate total connections
-    final directConnections = users.length; // Number of users in the list
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -41,136 +16,85 @@ class NetworkPage extends StatelessWidget {
         foregroundColor: Colors.white,
         title: const Text('My Network'),
       ),
-      body: SafeArea( 
-        child: Column(
-          children: [
-            Container(
-              height: 150,
-              padding: const EdgeInsets.symmetric(horizontal: 100.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16.0),
-                  bottomRight: Radius.circular(16.0),
+      body: FutureBuilder<MyUser>(
+        future: FirebaseUserRepository().getMyUser(userId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            MyUser user = snapshot.data!;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(8.0),
+              child: _buildUserNode(user),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return const Center(child: Text('No recruits found.'));
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildUserNode(MyUser user) {
+    return FutureBuilder<List<MyUser>>(
+      future: FirebaseUserRepository().getRecruitedUsers(user.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildUserCard(user, isLoading: true);
+        } else if (snapshot.hasData) {
+          List<MyUser> recruitedUsers = snapshot.data!;
+          if (recruitedUsers.isEmpty) {
+            return _buildUserCard(user, hasNoRecruits: true);
+          } else {
+            return Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ExpansionTile(
+                leading: CircleAvatar(
+                  backgroundImage: user.picture != null && user.picture!.isNotEmpty
+                      ? NetworkImage(user.picture!)
+                      : null,
+                  child: user.picture == null || user.picture!.isEmpty
+                      ? Text(user.username[0].toUpperCase())
+                      : null,
                 ),
+                title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text('User name: ${user.name}'),
+                children: recruitedUsers.map((recruit) => _buildUserNode(recruit)).toList(),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.emoji_people, color: Colors.white),
-                      const SizedBox(width: 8.0),
-                      Text(
-                        'Direct: $directConnections',
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.people_rounded, color: Colors.white), 
-                      const SizedBox(width: 8.0),
-                      Text(
-                        'Total: $totalConnections',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  final user = users[index];
-                  return NetworkUserCard(user: user);
-                },
-              ),
-            ),
-          ],
+            );
+          }
+        } else {
+          return _buildUserCard(user, isError: true);
+        }
+      },
+    );
+  }
+
+  Widget _buildUserCard(MyUser user, {bool isLoading = false, bool hasNoRecruits = false, bool isError = false}) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: user.picture != null && user.picture!.isNotEmpty
+              ? NetworkImage(user.picture!)
+              : null,
+          child: user.picture == null || user.picture!.isEmpty
+              ? Text(user.username[0].toUpperCase())
+              : null,
         ),
+        title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: isLoading
+            ? Text('Loading recruits...')
+            : hasNoRecruits
+                ? Text('No recruits')
+                : isError
+                    ? Text('Error loading recruits')
+                    : Text('User ID: ${user.id}'),
       ),
     );
   }
-
-  // Replace this with your actual logic to calculate total connections
-  int calculateTotalConnections(List<NetworkUser> users) {
-    return users.length * 6; // Placeholder for estimated connections
-  }
-}
-
-class NetworkUserCard extends StatelessWidget {
-  final NetworkUser user;
-
-  const NetworkUserCard({super.key, required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200, // Set a light grey background color
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 4.0,
-            spreadRadius: 0.0,
-            offset: const Offset(0.0, 2.0),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container( // Placeholder for profile image (optional)
-            width: 64.0,
-            height: 64.0,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300, // Lighter grey for placeholder
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: const Center(child: Icon(Icons.person, color: Colors.grey)), // Optional icon
-          ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(user.name,),
-                Text(user.rank, style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
-                const SizedBox(height: 8.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(DateFormat.yMMMd().format(user.dateJoined), style: const TextStyle(fontSize: 10.0)),
-                    const Icon(Icons.push_pin, color: Colors.grey),
-                  ],
-                ),
-                Text(user.nickname, style: const TextStyle(fontStyle: FontStyle.italic)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-
-class NetworkUser {
-  final String name;
-  final String rank;
-  final String pictureUrl;
-  final String nickname;
-  final DateTime dateJoined;
-
-  NetworkUser({
-    required this.name,
-    required this.rank,
-    required this.pictureUrl,
-    required this.nickname,
-    required this.dateJoined,
-  });
 }

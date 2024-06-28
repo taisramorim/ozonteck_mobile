@@ -55,9 +55,9 @@ class MyAppView extends StatelessWidget {
                     myUserId: context.read<AuthenticationBloc>().state.user!.uid,
                   )),
                 ),
-                BlocProvider(
+                BlocProvider<GetProductBloc>(
                   create: (context) => GetProductBloc(
-                    productRepository: RepositoryProvider.of<ProductRepository>(context),
+                    productRepository: context.read<ProductRepository>(),
                   )..add(LoadProduct()),
                 ),
                 BlocProvider(
@@ -67,7 +67,7 @@ class MyAppView extends StatelessWidget {
                   )..add(LoadCart()),
                 ),
               ],
-              child: const HomeScreen(),
+              child: HomeScreen(userId: context.read<AuthenticationBloc>().state.user!.uid),
             );
           } else {
             return const WelcomePage();

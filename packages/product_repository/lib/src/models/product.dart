@@ -1,11 +1,11 @@
 import 'package:product_repository/product_repository.dart';
 
-class Product{
+class Product {
 
   final String productId;
   final String name;
   final String description;
-  final double price;
+  final int price; 
   final int points;
   final String category;
   final String imageUrl;
@@ -45,6 +45,19 @@ class Product{
       category: entity.category,
       imageUrl: entity.imageUrl,
       personalStock: entity.personalStock,
+    );
+  }
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      productId: json['productId'] as String? ?? '',
+      name: json['name'] as String? ?? 'Unnamed Product',
+      description: json['description'] as String? ?? 'No description',
+      price: (json['price'] as num?)?.toInt() ?? 0,
+      points: (json['points'] as num?)?.toInt() ?? 0,
+      category: json['category'] as String? ?? 'Uncategorized',
+      imageUrl: json['imageUrl'] as String? ?? '',
+      personalStock: (json['personalStock'] as num?)?.toInt() ?? 0,
     );
   }
 }

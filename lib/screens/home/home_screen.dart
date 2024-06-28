@@ -18,7 +18,9 @@ import 'package:ozonteck_mobile/screens/home/score_page.dart';
 import 'package:product_repository/product_repository.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String userId;
+
+  const HomeScreen({super.key, required this.userId});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -177,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                          MaterialPageRoute(builder: (context) => NetworkPage(userId: widget.userId,)),
                         );
                       }
                     ),
@@ -218,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NetworkPage()),
+                          MaterialPageRoute(builder: (context) => NetworkPage(userId: widget.userId)),
                         );
                       }
                     ),

@@ -1,3 +1,4 @@
+// products_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
@@ -31,6 +32,10 @@ class ProductsPage extends StatelessWidget {
         child: BlocBuilder<GetProductBloc, GetProductState>(
           builder: (context, state) {
             if (state is GetProductSuccess) {
+              print('Products fetched successfully: ${state.products.length}');
+              if (state.products.isEmpty) {
+                return const Center(child: Text('No products available.'));
+              }
               return GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -53,8 +58,7 @@ class ProductsPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute<void>(
-                            builder: (BuildContext context) => ProductDetail(
-                              product),
+                            builder: (BuildContext context) => ProductDetail(product),
                           ),
                         );
                       },
@@ -70,6 +74,9 @@ class ProductsPage extends StatelessWidget {
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.error);
+                                },
                               ),
                             ),
                             const SizedBox(height: 15),
@@ -78,7 +85,13 @@ class ProductsPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(30),
-                              ),                              
+                              ),
+                              child: Text(
+                                'Category',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 10),
                             Text(
@@ -107,7 +120,7 @@ class ProductsPage extends StatelessWidget {
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                ),                                
+                                ),
                                 IconButton(
                                   onPressed: () {},
                                   icon: const Icon(Icons.add_shopping_cart),
@@ -123,17 +136,20 @@ class ProductsPage extends StatelessWidget {
               );
             } else if (state is GetProductLoading) {
               return const Center(child: CircularProgressIndicator());
+            } else if (state is GetProductFailure) {
+              print('Error fetching products');
+              return const Center(child: Text('Error fetching products.'));
             } else {
-              return const Center(child: Text('Error'));
+              return const Center(child: Text('Unknown state.'));
             }
           },
         ),
       ),
     );
   }
-  
+
   String limitDescription(String description) {
-  int dotIndex = description.indexOf('.');
-  return dotIndex != -1 ? description.substring(0, dotIndex + 1) : description;
-}
+    int dotIndex = description.indexOf('.');
+    return dotIndex != -1 ? description.substring(0, dotIndex + 1) : description;
+  }
 }

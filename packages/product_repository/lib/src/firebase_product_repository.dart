@@ -9,14 +9,20 @@ class FirebaseProductRepository implements ProductRepository {
   @override
   Future<List<Product>> getProducts() async {
     try {
-      return await productCollection
-        .get()
-        .then((value) => value.docs.map((e) => 
-          Product.fromEntity(ProductEntity.fromDocument(e.data()))
-        ).toList());
+      log('Fetching products from Firestore...');
+      QuerySnapshot snapshot = await productCollection.get();
+      log('Fetched ${snapshot.docs.length} documents.');
+      List<Product> products = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        log('Document data: $data'); // Log the document data
+
+        return Product.fromEntity(ProductEntity.fromDocument(data));
+      }).toList();
+      log('Converted documents to Product objects.');
+      return products;
     } catch (e) {
-      log(e.toString());
-      rethrow;
+      log('Error fetching products: $e');
+      throw Exception('Error fetching products from Firestore');
     }
   }
 

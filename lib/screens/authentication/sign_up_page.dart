@@ -16,9 +16,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final recruiterIdController = TextEditingController();
+  final usernameController = TextEditingController();
+  bool isLoading = false;
   bool obscurePassword = true;
   IconData iconPassword = Icons.visibility_off;
-  final nameController = TextEditingController();
   bool signUpRequired = false;
 
   bool containsUpperCase = false;
@@ -27,6 +30,24 @@ class _SignUpPageState extends State<SignUpPage> {
   bool containsSpecialChar = false;
   bool containsLength = false;
 
+  Future<void> _signup() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      final user = MyUser(
+        id: '',
+        email: emailController.text,
+        name: nameController.text,
+        username: usernameController.text,
+      );
+      final password = passwordController.text;
+      final recruiterUsername = recruiterIdController.text;
+      
+      BlocProvider.of<SignUpBloc>(context).add(SignUpRequired(user, password, recruiterUsername));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
@@ -34,15 +55,21 @@ class _SignUpPageState extends State<SignUpPage> {
         if(state is SignUpSuccess) {
           setState(() {
             signUpRequired = false;
+            isLoading = false;
           });
         } else if(state is SignUpProcess) {
           setState(() {
             signUpRequired = true;
           });
         } else if( state is SignUpFailure) {
-          return;
-        }
-      },
+            setState(() {
+              isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
       child: Form(
         key: _formKey,
         child: Center(
@@ -68,140 +95,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: obscurePassword,
-                  keyboardType: TextInputType.visiblePassword,
-                  prefixIcon: const Icon(Icons.lock),
-                  onChanged: (val) {
-                    if (val!.contains(RegExp(r'[A-Z]'))) {
-                      setState(() {
-                        containsUpperCase = true;
-                      });                      
-                    } else {
-                      setState(() {
-                        containsUpperCase = false;
-                      });
-                    }
-                    if (val.contains(RegExp(r'[a-z]'))) {
-                      setState(() {
-                        containsLowerCase = true;
-                      });
-                    } else {
-                      setState(() {
-                        containsLowerCase = false;
-                      });
-                    }
-                    if (val.contains(RegExp(r'[0-9]'))) {
-                      setState(() {
-                        containsNumber = true;
-                      });
-                    } else {
-                      setState(() {
-                        containsNumber = false;
-                      });
-                    }
-                    if (val.contains(specialCharRexExp)) {
-                      setState(() {
-                        containsSpecialChar = true;
-                      });
-                    } else {
-                      setState(() {
-                        containsSpecialChar = false;
-                      });
-                    }
-                    if (val.length >= 8) {
-                      setState(() {
-                        containsLength = true;
-                      });
-                    } else {
-                      setState(() {
-                        containsLength = false;
-                      });
-                    }
-                    return null;
-                  },
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscurePassword = !obscurePassword;
-                        if (obscurePassword) {
-                          iconPassword = Icons.visibility_off;
-                        } else {
-                          iconPassword = Icons.visibility;
-                        }
-                      });
-                    },
-                    icon: Icon(iconPassword),
-                  ),
-                  validator: (val) {
-                    if(val!.isEmpty) {
-                      return 'Please fill in this field';
-                    } else if(!passwordRexExp.hasMatch(val)) {
-                      return 'Please enter a valid password';
-                    }
-                    return null;
-                  }
-                ),
-              ),
+              _buildpassword(context),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("⚈  1 letra maiúscula",
-													style: TextStyle(
-														color: containsUpperCase
-															? Colors.green
-															: Theme.of(context).colorScheme.onSurface
-													),
-												),
-												Text(
-													"⚈  1 letra minúscula",
-													style: TextStyle(
-														color: containsLowerCase
-															? Colors.green
-															: Theme.of(context).colorScheme.onSurface
-													),
-												),
-												Text(
-													"⚈  1 número",
-													style: TextStyle(
-														color: containsNumber
-															? Colors.green
-															: Theme.of(context).colorScheme.onSurface)
-                          ),
-                      ],
-                  ), 
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "⚈  1 caractere especial",
-													style: TextStyle(
-														color: containsSpecialChar
-															? Colors.green
-															: Theme.of(context).colorScheme.onSurface
-													),
-												),
-												Text(
-													"⚈  Mínimo de 8 caracteres",
-													style: TextStyle(
-														color: containsLength
-															? Colors.green
-															: Theme.of(context).colorScheme.onSurface 
-                            ),
-                          ),
-                      ],
-                  ),
-                ], 
-              ),
+              _passwordspec(context),
               const SizedBox(height: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
@@ -221,27 +117,45 @@ class _SignUpPageState extends State<SignUpPage> {
                   }
                 ),
               ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: MyTextField(
+                  controller: usernameController, 
+                  hintText: 'Username', 
+                  obscureText: false, 
+                  keyboardType: TextInputType.name,
+                  prefixIcon: const Icon(Icons.person),
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Por favor, preencha esse campo';
+                    } else if (val.length > 30) {
+                      return 'Nome muito grande';
+                    }
+                    return null;
+                  }
+                ),
+              ),
+              const SizedBox(height: 10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: MyTextField(
+                    controller: recruiterIdController, 
+                    hintText: 'Recruiter ID', 
+                    obscureText: false, 
+                    keyboardType: TextInputType.text,
+                    prefixIcon: const Icon(Icons.person_add),
+                    validator: (val) {
+                      return null;
+                    }
+                  ),
+                ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               !signUpRequired
                 ? SizedBox(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child:  TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        MyUser myUser = MyUser.empty;
-                        myUser = myUser.copyWith(
-                          email: emailController.text,
-                          name: nameController.text,
-                        );
-                        setState(() {
-                          context.read<SignUpBloc>().add(
-                            SignUpRequired(
-                              myUser,
-                              passwordController.text
-                            )
-                          );
-                        });
-                      }
+                    onPressed: () {_signup();
                     },
                     style: TextButton.styleFrom(
                       elevation: 3,
@@ -271,5 +185,144 @@ class _SignUpPageState extends State<SignUpPage> {
         )
       )
     );
+  }
+
+  SizedBox _buildpassword(BuildContext context) {
+    return SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: MyTextField(
+                controller: passwordController,
+                hintText: 'Password',
+                obscureText: obscurePassword,
+                keyboardType: TextInputType.visiblePassword,
+                prefixIcon: const Icon(Icons.lock),
+                onChanged: (val) {
+                  if (val!.contains(RegExp(r'[A-Z]'))) {
+                    setState(() {
+                      containsUpperCase = true;
+                    });                      
+                  } else {
+                    setState(() {
+                      containsUpperCase = false;
+                    });
+                  }
+                  if (val.contains(RegExp(r'[a-z]'))) {
+                    setState(() {
+                      containsLowerCase = true;
+                    });
+                  } else {
+                    setState(() {
+                      containsLowerCase = false;
+                    });
+                  }
+                  if (val.contains(RegExp(r'[0-9]'))) {
+                    setState(() {
+                      containsNumber = true;
+                    });
+                  } else {
+                    setState(() {
+                      containsNumber = false;
+                    });
+                  }
+                  if (val.contains(specialCharRexExp)) {
+                    setState(() {
+                      containsSpecialChar = true;
+                    });
+                  } else {
+                    setState(() {
+                      containsSpecialChar = false;
+                    });
+                  }
+                  if (val.length >= 8) {
+                    setState(() {
+                      containsLength = true;
+                    });
+                  } else {
+                    setState(() {
+                      containsLength = false;
+                    });
+                  }
+                  return null;
+                },
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      obscurePassword = !obscurePassword;
+                      if (obscurePassword) {
+                        iconPassword = Icons.visibility_off;
+                      } else {
+                        iconPassword = Icons.visibility;
+                      }
+                    });
+                  },
+                  icon: Icon(iconPassword),
+                ),
+                validator: (val) {
+                  if(val!.isEmpty) {
+                    return 'Please fill in this field';
+                  } else if(!passwordRexExp.hasMatch(val)) {
+                    return 'Please enter a valid password';
+                  }
+                  return null;
+                }
+              ),
+            );
+  }
+
+  Row _passwordspec(BuildContext context) {
+    return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("⚈  1 letra maiúscula",
+													style: TextStyle(
+														color: containsUpperCase
+															? Colors.green
+															: Theme.of(context).colorScheme.onSurface
+													),
+												),
+												Text(
+													"⚈  1 letra minúscula",
+													style: TextStyle(
+														color: containsLowerCase
+															? Colors.green
+															: Theme.of(context).colorScheme.onSurface
+													),
+												),
+												Text(
+													"⚈  1 número",
+													style: TextStyle(
+														color: containsNumber
+															? Colors.green
+															: Theme.of(context).colorScheme.onSurface)
+                        ),
+                    ],
+                ), 
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "⚈  1 caractere especial",
+													style: TextStyle(
+														color: containsSpecialChar
+															? Colors.green
+															: Theme.of(context).colorScheme.onSurface
+													),
+												),
+												Text(
+													"⚈  Mínimo de 8 caracteres",
+													style: TextStyle(
+														color: containsLength
+															? Colors.green
+															: Theme.of(context).colorScheme.onSurface 
+                          ),
+                        ),
+                    ],
+                ),
+              ], 
+            );
   }
 }
