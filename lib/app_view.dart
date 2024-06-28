@@ -67,7 +67,7 @@ class MyAppView extends StatelessWidget {
                   )..add(LoadCart()),
                 ),
               ],
-              child: const HomeScreen(),
+              child: HomeScreen(userId: context.read<AuthenticationBloc>().state.user!.uid),
             );
           } else {
             return const WelcomePage();

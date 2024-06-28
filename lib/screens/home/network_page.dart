@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:user_repository/user_repository.dart'; // Import for date formatting
+import 'package:user_repository/user_repository.dart';
 
 class NetworkPage extends StatelessWidget {
   final String userId;
@@ -17,29 +16,84 @@ class NetworkPage extends StatelessWidget {
         foregroundColor: Colors.white,
         title: const Text('My Network'),
       ),
-      body: FutureBuilder<List<MyUser>>(
-        future: FirebaseUserRepository().getUserNetwork(userId), // Adjust this line to your repository instance
+      body: FutureBuilder<MyUser>(
+        future: FirebaseUserRepository().getMyUser(userId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            MyUser user = snapshot.data!;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(8.0),
+              child: _buildUserNode(user),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No recruits found.'));
           } else {
-            List<MyUser> network = snapshot.data!;
-            return ListView.builder(
-              itemCount: network.length,
-              itemBuilder: (context, index) {
-                MyUser user = network[index];
-                return ListTile(
-                  title: Text(user.username),
-                  subtitle: Text('User ID: ${user.id}'),
-                );
-              },
-            );
+            return const Center(child: Text('No recruits found.'));
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildUserNode(MyUser user) {
+    return FutureBuilder<List<MyUser>>(
+      future: FirebaseUserRepository().getRecruitedUsers(user.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildUserCard(user, isLoading: true);
+        } else if (snapshot.hasData) {
+          List<MyUser> recruitedUsers = snapshot.data!;
+          if (recruitedUsers.isEmpty) {
+            return _buildUserCard(user, hasNoRecruits: true);
+          } else {
+            return Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ExpansionTile(
+                leading: CircleAvatar(
+                  backgroundImage: user.picture != null && user.picture!.isNotEmpty
+                      ? NetworkImage(user.picture!)
+                      : null,
+                  child: user.picture == null || user.picture!.isEmpty
+                      ? Text(user.username[0].toUpperCase())
+                      : null,
+                ),
+                title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text('User name: ${user.name}'),
+                children: recruitedUsers.map((recruit) => _buildUserNode(recruit)).toList(),
+              ),
+            );
+          }
+        } else {
+          return _buildUserCard(user, isError: true);
+        }
+      },
+    );
+  }
+
+  Widget _buildUserCard(MyUser user, {bool isLoading = false, bool hasNoRecruits = false, bool isError = false}) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: user.picture != null && user.picture!.isNotEmpty
+              ? NetworkImage(user.picture!)
+              : null,
+          child: user.picture == null || user.picture!.isEmpty
+              ? Text(user.username[0].toUpperCase())
+              : null,
+        ),
+        title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: isLoading
+            ? Text('Loading recruits...')
+            : hasNoRecruits
+                ? Text('No recruits')
+                : isError
+                    ? Text('Error loading recruits')
+                    : Text('User ID: ${user.id}'),
       ),
     );
   }
