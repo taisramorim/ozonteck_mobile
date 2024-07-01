@@ -1,4 +1,3 @@
-import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/blocs/authentication_bloc/authentication_bloc.dart';
@@ -30,44 +29,21 @@ class MyAppView extends StatelessWidget {
           tertiary: Color.fromRGBO(173, 184, 194, 1),
           onTertiary: Color.fromRGBO(215, 221, 226, 1),
           outline: Color.fromRGBO(242, 249, 249, 1),
-          error: Colors.red,
-        ),
+          error: Colors.red),
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state.status == AuthenticationStatus.authenticated) {
+            final userId = context.read<AuthenticationBloc>().state.user!.uid;
             return MultiBlocProvider(
               providers: [
                 BlocProvider(
-                  create: (context) => SignInBloc(
-                    userRepository: context.read<AuthenticationBloc>().userRepository,
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => UpdateUserInfoBloc(
-                    userRepository: context.read<AuthenticationBloc>().userRepository,
-                  ),
-                ),
-                BlocProvider(
                   create: (context) => MyUserBloc(
                     myUserRepository: context.read<AuthenticationBloc>().userRepository,
-                  )..add(GetMyUser(
-                    myUserId: context.read<AuthenticationBloc>().state.user!.uid,
-                  )),
-                ),
-                BlocProvider<GetProductBloc>(
-                  create: (context) => GetProductBloc(
-                    productRepository: context.read<ProductRepository>(),
-                  )..add(LoadProduct()),
-                ),
-                BlocProvider(
-                  create: (context) => CartBloc(
-                    FirebaseCartRepository(),
-                    context.read<AuthenticationBloc>().state.user!.uid,
-                  )..add(LoadCart()),
+                  )..add(GetMyUser(myUserId: userId)),
                 ),
               ],
-              child: HomeScreen(userId: context.read<AuthenticationBloc>().state.user!.uid),
+              child: HomeScreen(userId: userId),
             );
           } else {
             return const WelcomePage();

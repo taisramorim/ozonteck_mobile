@@ -4,5 +4,7 @@ abstract class ProductRepository{
 
   Future<List<Product>> getProducts();
 
-  Future<void> updatePersonalStock(String productId, int personalStock);
+  Future<void> updateProductStock(String productId, int stock);
+
+  Future<int> fetchProductPoints(String productId);
 }

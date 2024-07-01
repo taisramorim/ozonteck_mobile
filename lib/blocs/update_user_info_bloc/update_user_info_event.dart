@@ -14,5 +14,25 @@ class UploadPicture extends UpdateUserInfoEvent {
   const UploadPicture(this.file, this.userId);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [file, userId];
+}
+
+class UpdateUserInfo extends UpdateUserInfoEvent {
+  final String userId;
+  final String name;
+  final String email;
+
+  const UpdateUserInfo(this.userId, {required this.name, required this.email});
+
+  @override
+  List<Object> get props => [userId, name, email];
+}
+
+class ResetPassword extends UpdateUserInfoEvent {
+  final String email;
+
+  const ResetPassword(this.email);
+
+  @override
+  List<Object> get props => [email];
 }

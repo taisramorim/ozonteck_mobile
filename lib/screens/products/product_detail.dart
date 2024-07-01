@@ -1,10 +1,39 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ozonteck_mobile/blocs/cart_bloc/cart_bloc.dart';
 import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
-class ProductDetail extends StatelessWidget {
+class ProductDetail extends StatefulWidget {
   final Product product;
   const ProductDetail(this.product, {super.key});
 
+  @override
+  State<ProductDetail> createState() => _ProductDetailState();
+}
+
+class _ProductDetailState extends State<ProductDetail> {
+  String? _currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUserId();
+  }
+
+  Future<void> _fetchCurrentUserId() async {
+    final userRepository = context.read<UserRepository>();
+    try {
+      final userId = await userRepository.getCurrentUserId();
+      setState(() {
+        _currentUserId = userId;
+      });
+    } catch (e) {
+      // Handle error if needed
+      print('Error fetching user ID: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +45,7 @@ class ProductDetail extends StatelessWidget {
         title: const Text('Product Detail'),            
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(40),
         child: Column(
           children: [
             Container(
@@ -27,7 +56,7 @@ class ProductDetail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                   image: NetworkImage(
-                    product.imageUrl),
+                    widget.product.imageUrl),
                 ),
               ),
             ),
@@ -54,7 +83,7 @@ class ProductDetail extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: Text(
-                              product.name,
+                              widget.product.name,
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
@@ -66,7 +95,7 @@ class ProductDetail extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            'R\$ ${product.price.toString()}',
+                            'R\$ ${widget.product.price.toString()}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700
@@ -81,7 +110,15 @@ class ProductDetail extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_currentUserId != null) {
+                            final cartItem = CartItem(product: widget.product);
+                            context.read<CartBloc>().add(AddToCart(
+                              userId: _currentUserId!,
+                              cartItem: cartItem,
+                            ));
+                          }                          
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.secondary,
                           shape: RoundedRectangleBorder(
@@ -100,7 +137,7 @@ class ProductDetail extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                        limitDescription(product.description),
+                        limitDescription(widget.product.description),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -112,9 +149,9 @@ class ProductDetail extends StatelessWidget {
                           builder: (context) => Container(
                             height: 600, // Ajuste a altura do painel
                             padding: const EdgeInsets.all(16.0),
-                            child: const SingleChildScrollView(
+                            child: SingleChildScrollView(
                               child: Text(
-                                'Ampola ozonizada de tratamento para cabelos ressecados, Soft Hair da OZONTECK oferece nutrição e hidratação intensa que dá brilho aos fios. Contém alta concentração de nutrientes e hidratantes que penetram profundamente na fibra capilar e eliminam o aspecto sem vida, áspero e opaco dos fios. Além de tratar, a fórmula de Soft Hair também protege da volta do ressecamento com a selagem das cutículas, a barreira natural dos fios, que garante também o brilho luminoso e o sensorial macio. TOP 10 benefícios da Ampola Mágica SOFT HAIR! 1 - Hidrata e nutre profundamente. 2- Auxilia no combate a queda. 3- Fortalece os fios. 4- Auxilia no crescimento capilar. 5- Mais brilho e maciez. 6- Reduz o volume. 7- Controla o frizz. 8- Elimina as pontas duplas. 9- Compatível com todos os tipos de cabelos. 10- Produto com ALTÍSSIMA QUALIDADE para empreender. Modo de preparo: 1 colher de sopa para cada 30ml de água, misturar até virar um mousse. Rende até 5 aplicaçações dependendo o comprimento do seu cabelo. Conselho de Aplicação: Após lavar os cabelos, retire o excesso de água dos fios com uma toalha, em seguida, distribua o conteúdo preparado da ampola no comprimento e pontas. Massageie mecha a mecha e deixe agir de 10 a 15 minutos. Enxágue completamente. A FINALIZAÇÃO É POR CONTA DO CLIENTE. PARA TODOS OS TIPOS DE CABELO.',
+                                widget.product.description,
                               ),
                             ),
                           ),
@@ -131,7 +168,7 @@ class ProductDetail extends StatelessWidget {
       ),      
     );
   }
-  
+
   String limitDescription(String description) {
   int dotIndex = description.indexOf('.');
   return dotIndex != -1 ? description.substring(0, dotIndex + 1) : description;

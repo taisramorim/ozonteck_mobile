@@ -22,14 +22,14 @@ class GetProductSuccess extends GetProductState {
 
 class GetProductFailure extends GetProductState {}
 
-class UpdatePersonalStockSuccess extends GetProductState {
+class UpdateProductStockSuccess extends GetProductState {
   final String productId;
-  final int personalStock;
+  final int stock;
 
-  const UpdatePersonalStockSuccess({required this.productId, required this.personalStock});
+  const UpdateProductStockSuccess({required this.productId, required this.stock});
 
   @override
-  List<Object> get props => [productId, personalStock];
+  List<Object> get props => [productId, stock];
 }
 
-class UpdatePersonalStockFailure extends GetProductState {}
+class UpdateProductStockFailure extends GetProductState {}

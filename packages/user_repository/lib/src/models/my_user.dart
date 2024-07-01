@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../entities/entities.dart';
 
 class MyUser extends Equatable {
-
+  
   final String id;
   final String email;
   final String username;
@@ -13,11 +13,9 @@ class MyUser extends Equatable {
   int level;
   int earnings;
   final List<String> recruitedUsers;
-  List<Cart> cart;
-
+  List<CartItem> cart;
 
   MyUser({
-    
     required this.id,
     required this.email,
     required this.username,
@@ -30,21 +28,7 @@ class MyUser extends Equatable {
     this.cart = const [],
   });
 
-  // Empty user which represents an unauthenticated user
-  static final empty = MyUser(
-    id: '',
-    email: '',
-    username: '',
-    name: '',
-    picture: '',
-    points: 0,
-    level: 0,
-    earnings: 0,
-    recruitedUsers: const [],
-    cart: const [],
-  );
-
-// Modify MyUser parameters
+  // Modify MyUser parameters
   MyUser copyWith({
     String? id,
     String? email,
@@ -55,7 +39,7 @@ class MyUser extends Equatable {
     int? level,
     int? earnings,
     List<String>? recruitedUsers,
-    List<Cart>? cart,
+    List<CartItem>? cart,
   }) {
     return MyUser(
       id: id ?? this.id,
@@ -68,16 +52,10 @@ class MyUser extends Equatable {
       earnings: earnings ?? this.earnings,
       recruitedUsers: recruitedUsers ?? this.recruitedUsers,
       cart: cart ?? this.cart,
-      );
+    );
   }
 
-// Convenience getter to determine whether the current user is empty.
-  bool get isEmpty => this == MyUser.empty;
-
-// Convenience getter to determine whether the current user is not empty.
-  bool get inNotEmpty => this != MyUser.empty;
-
-  MyUserEntity toEntity(){
+  MyUserEntity toEntity() {
     return MyUserEntity(
       id: id,
       email: email,
@@ -88,8 +66,7 @@ class MyUser extends Equatable {
       level: level,
       earnings: earnings,
       recruitedUsers: recruitedUsers,
-      cart: cart,
-      
+      cart: cart.map((item) => item.toEntity()).toList(),
     );
   }
 
@@ -104,14 +81,10 @@ class MyUser extends Equatable {
       level: entity.level,
       earnings: entity.earnings,
       recruitedUsers: entity.recruitedUsers,
-      cart: entity.cart,
+      cart: entity.cart.map((item) => CartItem.fromEntity(item)).toList(),
     );
   }
 
   @override
   List<Object?> get props => [id, email, username, name, picture, points, level, earnings, recruitedUsers, cart];
-
-  // @override
-  // String toString(){
-    // return 'MyUser: $id, $email, $name, $picture, $hasActiveCart'; }
 }

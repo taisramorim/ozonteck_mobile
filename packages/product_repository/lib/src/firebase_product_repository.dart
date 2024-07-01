@@ -9,32 +9,34 @@ class FirebaseProductRepository implements ProductRepository {
   @override
   Future<List<Product>> getProducts() async {
     try {
-      log('Fetching products from Firestore...');
       QuerySnapshot snapshot = await productCollection.get();
-      log('Fetched ${snapshot.docs.length} documents.');
       List<Product> products = snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        log('Document data: $data'); // Log the document data
-
         return Product.fromEntity(ProductEntity.fromDocument(data));
       }).toList();
-      log('Converted documents to Product objects.');
       return products;
     } catch (e) {
-      log('Error fetching products: $e');
-      throw Exception('Error fetching products from Firestore');
+      log(e.toString());
+      rethrow;
     }
   }
 
   @override
-  Future<void> updatePersonalStock(String productId, int personalStock) async {
+  Future<void> updateProductStock(String productId, int stock) async {
     try {
       await productCollection.doc(productId).update({
-        'personalStock': personalStock,
+        'stock': stock,
       });
     } catch (e) {
       log(e.toString());
       rethrow;
     }
+  }
+
+  @override
+  Future<int> fetchProductPoints(String productId) async {
+    final productSnapshot = await productCollection.doc(productId).get();
+    final productData = productSnapshot.data() as Map<String, dynamic>;
+    return productData['points'] as int;
   }
 }

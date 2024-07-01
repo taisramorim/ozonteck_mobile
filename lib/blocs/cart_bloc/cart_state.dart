@@ -9,15 +9,42 @@ abstract class CartState extends Equatable {
 
 class CartInitial extends CartState {}
 
-class CartLoading extends CartState {}
+class CartUpdateSuccess extends CartState {}
 
-class CartUpdated extends CartState {
-  final Cart cart;
+class CartUpdateFailure extends CartState {
+  final String error;
 
-  const CartUpdated({required this.cart});
+  const CartUpdateFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class PurchaseSuccess extends CartState {}
+
+class PurchaseFailure extends CartState {
+  final String error;
+
+  const PurchaseFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class CartLoaded extends CartState {
+  final List<CartItem> cart;
+
+  const CartLoaded({required this.cart});
 
   @override
   List<Object> get props => [cart];
 }
 
-class CartError extends CartState {}
+class CartLoadFailure extends CartState {
+  final String error;
+
+  const CartLoadFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}

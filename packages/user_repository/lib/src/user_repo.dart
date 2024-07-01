@@ -1,3 +1,4 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:user_repository/src/models/models.dart';
 
@@ -16,6 +17,8 @@ abstract class UserRepository {
   Future<void> setUserData(MyUser user);
 
   Future<MyUser> getMyUser(String myUserId);
+  
+  Future<String> getCurrentUserId();
 
   Future<String> uploadPicture(String file, String userId);
   
@@ -30,5 +33,17 @@ abstract class UserRepository {
   Future<List<MyUser>> getUserNetwork(String userId);
 
   Future<List<MyUser>> getRecruitedUsers(String userId);
+
+  Future<void> updateUserPoints(String userId, int pointsToAdd);
+
+  Future<void> updateUserEarnings(String userId, int earningsToAdd);
+
+  Future<void> addProductToCart(String userId, CartItem cartItem);
+
+  Future<void> purchaseProducts(String userId);
+
+  Future<void> distributePointsToNetwork(String userId, int totalSpent);
+
+  Future<void> updateUserInfo(String userId, {String? name, String? email});
   
 }

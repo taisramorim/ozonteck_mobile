@@ -10,7 +10,12 @@ class FirebaseCartRepository implements CartRepo {
   Future<Cart> getCart(String userId) async {
     try {
       final doc = await cartCollection.doc(userId).get();
-      return Cart.fromEntity(doc.data() as CartEntity);
+      if (doc.exists) {
+        return Cart.fromEntity(CartEntity.fromDocument(doc.data() as Map<String, dynamic>));
+      } else {
+        log('Cart document does not exist');
+        return Cart(items: []); // Return an empty, modifiable cart
+      }
     } catch (e) {
       log(e.toString());
       rethrow;
