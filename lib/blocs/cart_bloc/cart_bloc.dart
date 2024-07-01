@@ -2,61 +2,74 @@ import 'package:bloc/bloc.dart';
 import 'package:cart_repository/cart_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  final FirebaseCartRepository _cartRepository;
-  final String userId;
-  
-  CartBloc(this._cartRepository, this.userId) : super(CartInitial()) {
+  final CartRepo _cartRepository;
+  final ProductRepository _productRepository;
+  final UserRepository _userRepository;
+
+  CartBloc({
+    required CartRepo cartRepository,
+    required ProductRepository productRepository,
+    required UserRepository userRepository,
+  })  : _cartRepository = cartRepository,
+        _productRepository = productRepository,
+        _userRepository = userRepository,
+        super(CartInitial()) {
     on<AddToCart>(_onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);
-    on<ClearCart>(_onClearCart);
+    on<PurchaseProducts>(_onPurchaseProducts);
     on<LoadCart>(_onLoadCart);
   }
 
-  void _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
-    emit(CartLoading());
+  Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     try {
-      final cart = await _cartRepository.getCart(userId);
-      emit(CartUpdated(cart: cart));
+      final cart = await _cartRepository.getCart(event.userId);
+      cart.items.add(event.cartItem);
+      await _cartRepository.updateCart(event.userId, cart);
+      emit(CartUpdateSuccess());
+      add(LoadCart(userId: event.userId));
     } catch (e) {
-      emit(CartError());
+      emit(CartUpdateFailure(e.toString()));
     }
   }
 
-  void _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
-    final currentState = state;
-    if (currentState is CartUpdated) {
-      final updatedCart = Cart(
-        items: List.from(currentState.cart.items)
-          ..add(CartItem(product: event.product, quantity: 1)),
-      );
-      await _cartRepository.updateCart(userId, updatedCart);
-      emit(CartUpdated(cart: updatedCart));
-    } else {
-      final newCart = Cart(items: [CartItem(product: event.product, quantity: 1)]);
-      await _cartRepository.updateCart(userId, newCart);
-      emit(CartUpdated(cart: newCart));
+  Future<void> _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) async {
+    try {
+      final cart = await _cartRepository.getCart(event.userId);
+      cart.items.remove(event.cartItem);
+      await _cartRepository.updateCart(event.userId, cart);
+      emit(CartUpdateSuccess());
+      add(LoadCart(userId: event.userId));
+    } catch (e) {
+      emit(CartUpdateFailure(e.toString()));
     }
   }
 
-  void _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) async {
-    final currentState = state;
-    if (currentState is CartUpdated) {
-      final updatedCart = Cart(
-        items: currentState.cart.items.where((item) => item.product.productId != event.product.productId).toList(),
-      );
-      await _cartRepository.updateCart(userId, updatedCart);
-      emit(CartUpdated(cart: updatedCart));
+  Future<void> _onPurchaseProducts(PurchaseProducts event, Emitter<CartState> emit) async {
+    try {
+      final cart = await _cartRepository.getCart(event.userId);
+      int totalPoints = cart.items.fold(0, (sum, item) => sum + item.totalPoints);
+      cart.items.clear();
+      await _cartRepository.updateCart(event.userId, cart);
+      await _userRepository.updateUserPoints(event.userId, totalPoints);
+      emit(PurchaseSuccess());
+      add(LoadCart(userId: event.userId));
+    } catch (e) {
+      emit(PurchaseFailure(e.toString()));
     }
   }
 
-  void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
-    final emptyCart = Cart(items: []);
-    await _cartRepository.updateCart(userId, emptyCart);
-    emit(CartUpdated(cart: emptyCart));
+  Future<void> _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
+    try {
+      final cart = await _cartRepository.getCart(event.userId);
+      emit(CartLoaded(cart: cart.items));
+    } catch (e) {
+      emit(CartLoadFailure(e.toString()));
+    }
   }
 }

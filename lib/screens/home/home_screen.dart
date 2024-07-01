@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
 import 'package:ozonteck_mobile/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:ozonteck_mobile/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:ozonteck_mobile/blocs/update_user_info_bloc/update_user_info_bloc.dart';
 import 'package:ozonteck_mobile/components/icons_home.dart';
-import 'package:ozonteck_mobile/components/score/pins_level.dart';
-import 'package:ozonteck_mobile/components/score/score_display.dart';
+import 'package:ozonteck_mobile/widgets/score/pins_level.dart';
+import 'package:ozonteck_mobile/widgets/score/score_display.dart';
 import 'package:ozonteck_mobile/screens/home/balance_page.dart';
 import 'package:ozonteck_mobile/screens/home/network_page.dart';
 import 'package:ozonteck_mobile/screens/home/orders_page.dart';
 import 'package:ozonteck_mobile/screens/home/products_page.dart';
 import 'package:ozonteck_mobile/screens/home/score_page.dart';
+import 'package:ozonteck_mobile/screens/pages/cart_page.dart';
+import 'package:ozonteck_mobile/screens/pages/profile_page.dart';
 import 'package:product_repository/product_repository.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,72 +47,50 @@ class _HomeScreenState extends State<HomeScreen> {
               if (state.status == MyUserStatus.success) {
                 return Row(
                   children: [
-                    state.user!.picture == ""
-                        ? GestureDetector(
-                            onTap: () async {
-                              final ImagePicker picker = ImagePicker();
-                              final XFile? image = await picker.pickImage(
-                                source: ImageSource.gallery,
-                                maxHeight: 500,
-                                maxWidth: 500,
-                                imageQuality: 40,
-                              );
-                              if (image != null) {
-                                CroppedFile? croppedFile =
-                                    await ImageCropper().cropImage(
-                                  sourcePath: image.path,
-                                  aspectRatio: const CropAspectRatio(
-                                    ratioX: 1,
-                                    ratioY: 1
-                                  ),                                  
-                                  uiSettings: [
-                                    AndroidUiSettings(
-                                        toolbarTitle: 'Cropper',
-                                        toolbarColor: Colors.black,
-                                        toolbarWidgetColor: Colors.white,
-                                        aspectRatioPresets: [
-                                          CropAspectRatioPreset.square
-                                        ],
-                                        initAspectRatio:
-                                            CropAspectRatioPreset.original,
-                                        lockAspectRatio: false),
-                                    IOSUiSettings(title: 'Cropper'),
-                                  ],
-                                );
-                                if (croppedFile != null) {
-                                  setState(() {
-                                    context.read<UpdateUserInfoBloc>().add(
-                                        UploadPicture(
-                                            croppedFile.path,
-                                            context
-                                                .read<MyUserBloc>().state.user!.id));
-                                  });
-                                }
-                              }
-                            },
-                            child: Container(
-                              width: 50,
-                              height: 50,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: context.read<MyUserBloc>(),
+                                ),
+                                BlocProvider.value(
+                                  value: context.read<UpdateUserInfoBloc>(),
+                                ),
+                              ],
+                              child: ProfilePage(userId: widget.userId),
+                            ),
+                          ),
+                        );
+                      },
+                      child: state.user!.picture == ""
+                          ? Container(
+                              width: 40,
+                              height: 40,
                               decoration: const BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.grey),
-                              child: const Icon(Icons.person,
-                                  color: Colors.white),
-                            ),
-                          )
-                        : Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
+                              child: const Icon(Icons.person, color: Colors.white),
+                            )
+                          : Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    image: NetworkImage(state.user!.picture!),
-                                    fit: BoxFit.cover)),
-                          ),
-                    const SizedBox(width: 15),
+                                  image: NetworkImage(state.user!.picture!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                    ),
+                    const SizedBox(width: 20),
                     Text(
                       "Hello ${state.user!.name}",
                       style: const TextStyle(color: Colors.white),
-                    )
+                    ),
                   ],
                 );
               } else {
@@ -122,7 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CartPage(userId: widget.userId),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.shopping_cart),
+            ),
             IconButton(
               onPressed: () {
                 context.read<SignInBloc>().add(const SignOutRequired());
@@ -136,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 50),
                 // Ranking Container
                 Hero(
                   tag: 'score',
@@ -153,9 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Theme.of(context).colorScheme.onTertiary,
                         borderRadius: BorderRadius.circular(20),
                         child: ScoreDisplay(
-                            currentPoints: 5000,
-                            nextLevelPoints: 15000,
-                            imageUrl: pinsLevelMapping[7].imageUrl),
+                          currentPoints: 5000,
+                          nextLevelPoints: 15000,
+                          imageUrl: pinsLevelMapping[7].imageUrl,
+                        ),
                       ),
                     ),
                   ),
@@ -172,16 +161,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(builder: (context) => const BalancePage()),
                         );
-                      }
+                      },
                     ),
                     IconsHome(
                       iconData: Icons.people,
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => NetworkPage(userId: widget.userId,)),
+                          MaterialPageRoute(builder: (context) => NetworkPage(userId: widget.userId)),
                         );
-                      }
+                      },
                     ),
                     IconsHome(
                       iconData: Icons.heat_pump_rounded,
@@ -194,11 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 productRepository: RepositoryProvider.of<ProductRepository>(context),
                               )..add(LoadProduct()),
                               child: const ProductsPage(),
-                              )
-                            )
+                            ),
+                          ),
                         );
                       },
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 50),
@@ -213,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(builder: (context) => const OrdersPage()),
                         );
-                      }
+                      },
                     ),
                     IconsHome(
                       iconData: Icons.location_city,
@@ -222,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(builder: (context) => NetworkPage(userId: widget.userId)),
                         );
-                      }
+                      },
                     ),
                   ],
                 ),

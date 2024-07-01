@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ozonteck_mobile/components/score/pins_level.dart';
-import 'package:ozonteck_mobile/components/score/score_display.dart';
+import 'package:ozonteck_mobile/widgets/score/pins_level.dart';
+import 'package:ozonteck_mobile/widgets/score/score_display.dart';
 
 class ScorePage extends StatelessWidget {
   const ScorePage({super.key});

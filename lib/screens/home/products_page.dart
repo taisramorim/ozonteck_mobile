@@ -1,22 +1,44 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ozonteck_mobile/blocs/get_product_bloc/get_product_bloc.dart';
+import 'package:ozonteck_mobile/blocs/cart_bloc/cart_bloc.dart';
+import 'package:ozonteck_mobile/screens/pages/cart_page.dart';
 import 'package:ozonteck_mobile/screens/products/product_detail.dart';
 import 'package:ozonteck_mobile/screens/products/product_search.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
-  
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
 }
 
 class _ProductsPageState extends State<ProductsPage> {
-  
   TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedCategory = 'All';
+  String? _currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUserId();
+  }
+
+  Future<void> _fetchCurrentUserId() async {
+    final userRepository = context.read<UserRepository>();
+    try {
+      final userId = await userRepository.getCurrentUserId();
+      setState(() {
+        _currentUserId = userId;
+      });
+    } catch (e) {
+      // Handle error if needed
+      print('Error fetching user ID: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +57,16 @@ class _ProductsPageState extends State<ProductsPage> {
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_currentUserId != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CartPage(userId: _currentUserId!),
+                  ),
+                );
+              }
+            },
             icon: const Icon(Icons.shopping_cart),
           ),
         ],
@@ -49,28 +80,28 @@ class _ProductsPageState extends State<ProductsPage> {
               child: BlocBuilder<GetProductBloc, GetProductState>(
                 builder: (context, state) {
                   if (state is GetProductSuccess) {
-                    // Filter products by search query
                     final filteredProducts = state.products.where((product) {
                       final matchesQuery = product.name.toLowerCase().contains(_searchQuery.toLowerCase());
                       final matchesCategory = _selectedCategory == 'All' || product.category == _selectedCategory;
                       return matchesQuery && matchesCategory;
-                    }).toList();            
-                     return GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 9 / 17,
-                        ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, int i) {
-                          final product = filteredProducts[i];
-                          return Material(
-                            elevation: 3,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                    }).toList();
+
+                    return GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 9 / 17,
+                      ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, int i) {
+                        final product = filteredProducts[i];
+                        return Material(
+                          elevation: 3,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(20),
                             onTap: () {
@@ -102,7 +133,8 @@ class _ProductsPageState extends State<ProductsPage> {
                                       color: Theme.of(context).colorScheme.secondary,
                                       borderRadius: BorderRadius.circular(30),
                                     ),
-                                    child: Text( product.category,
+                                    child: Text(
+                                      product.category,
                                       style: const TextStyle(
                                         color: Colors.white,
                                       ),
@@ -137,7 +169,15 @@ class _ProductsPageState extends State<ProductsPage> {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          if (_currentUserId != null) {
+                                            final cartItem = CartItem(product: product);
+                                            context.read<CartBloc>().add(AddToCart(
+                                              userId: _currentUserId!,
+                                              cartItem: cartItem,
+                                            ));
+                                          }
+                                        },
                                         icon: const Icon(Icons.shopping_cart_outlined),
                                       ),
                                     ],

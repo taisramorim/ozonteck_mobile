@@ -60,7 +60,7 @@ class NetworkPage extends StatelessWidget {
                       ? Text(user.username[0].toUpperCase())
                       : null,
                 ),
-                title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(user.username, style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text('User name: ${user.name}'),
                 children: recruitedUsers.map((recruit) => _buildUserNode(recruit)).toList(),
               ),
@@ -86,13 +86,13 @@ class NetworkPage extends StatelessWidget {
               ? Text(user.username[0].toUpperCase())
               : null,
         ),
-        title: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(user.username, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: isLoading
-            ? Text('Loading recruits...')
+            ? const Text('Loading recruits...')
             : hasNoRecruits
-                ? Text('No recruits')
+                ? const Text('No recruits')
                 : isError
-                    ? Text('Error loading recruits')
+                    ? const Text('Error loading recruits')
                     : Text('User ID: ${user.id}'),
       ),
     );

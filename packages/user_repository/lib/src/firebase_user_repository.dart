@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cart_repository/src/models/cart_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,6 +14,8 @@ class FirebaseUserRepository implements UserRepository {
 
   final FirebaseAuth _firebaseAuth;
   final usersCollection = FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
 
   @override
   Stream<User?> get user {
@@ -90,9 +93,6 @@ class FirebaseUserRepository implements UserRepository {
   @override
   Future<MyUser> getMyUser(String myUserId) async {
     try {
-      if (myUserId.isEmpty) {
-        throw Exception("User ID cannot be empty");
-      }
       DocumentSnapshot doc = await usersCollection.doc(myUserId).get();
       return MyUser.fromEntity(MyUserEntity.fromDocument(doc.data()! as Map<String, dynamic>));
     } catch (e) {
@@ -102,19 +102,24 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
+  Future<String> getCurrentUserId() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      return user.uid;
+    } else {
+      throw Exception('No user signed in');
+    }
+  }
+
+  @override
   Future<String> uploadPicture(String filePath, String userId) async {
     try {
-      if (userId.isEmpty) {
-        throw Exception("User ID cannot be empty");
-      }
       File imageFile = File(filePath);
-      Reference firebaseStoreRef = FirebaseStorage.instance.ref().child('$userId/PP/${userId}_lead');
-      await firebaseStoreRef.putFile(imageFile);
-      String url = await firebaseStoreRef.getDownloadURL();
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({'picture': url});
-
-      return url;
-    } catch (e) {
+      Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('user_images/$userId');
+      UploadTask uploadTask = firebaseStorageRef.putFile(imageFile);
+      TaskSnapshot taskSnapshot = await uploadTask;
+      return await taskSnapshot.ref.getDownloadURL();
+    }  catch (e) {
       log('Error uploading picture: $e');
       rethrow;
     }
@@ -182,26 +187,26 @@ class FirebaseUserRepository implements UserRepository {
         List<MyUser> users = userSnapshot.docs.map((doc) {
           return MyUser.fromEntity(MyUserEntity.fromDocument(doc.data()! as Map<String, dynamic>));
         }).toList();
-        for (var u in users) {
-          if (u.recruitedUsers.contains(recruiter.id)) {
-            u.earnings += 5;
-            u.points += 5;
-            await usersCollection.doc(u.id).update(u.toEntity().toDocument());
-            for (var v in users) {
-              if (v.recruitedUsers.contains(u.id)) {
-                v.earnings += 3;
-                v.points += 3;
-                await usersCollection.doc(v.id).update(v.toEntity().toDocument());
-                for (var w in users) {
-                  if (w.recruitedUsers.contains(v.id)) {
-                    w.earnings += 2;
-                    w.points += 2;
-                    await usersCollection.doc(w.id).update(w.toEntity().toDocument());
-                    for (var x in users) {
-                      if (x.recruitedUsers.contains(w.id)) {
-                        x.earnings += 1;
-                        x.points += 1;
-                        await usersCollection.doc(x.id).update(x.toEntity().toDocument());
+        for (var a in users) {
+          if (a.recruitedUsers.contains(recruiter.id)) {
+            a.earnings += 5;
+            a.points += 5;
+            await usersCollection.doc(a.id).update(a.toEntity().toDocument());
+            for (var b in users) {
+              if (b.recruitedUsers.contains(a.id)) {
+                b.earnings += 3;
+                b.points += 3;
+                await usersCollection.doc(b.id).update(b.toEntity().toDocument());
+                for (var c in users) {
+                  if (c.recruitedUsers.contains(b.id)) {
+                    c.earnings += 2;
+                    c.points += 2;
+                    await usersCollection.doc(c.id).update(c.toEntity().toDocument());
+                    for (var d in users) {
+                      if (d.recruitedUsers.contains(c.id)) {
+                        d.earnings += 1;
+                        d.points += 1;
+                        await usersCollection.doc(d.id).update(d.toEntity().toDocument());
                       }
                     }
                   }
@@ -267,6 +272,87 @@ class FirebaseUserRepository implements UserRepository {
       usersCollection.doc(userId).update({
         'points': FieldValue.increment(pointsToAdd),
       });
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUserEarnings(String userId, int earningsToAdd) async {
+    try {
+      usersCollection.doc(userId).update({
+        'earnings': FieldValue.increment(earningsToAdd),
+      });
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addProductToCart(String userId, CartItem cartItem) async {
+    try {
+      DocumentSnapshot doc = await usersCollection.doc(userId).get();
+      MyUser user = MyUser.fromEntity(MyUserEntity.fromDocument(doc.data()! as Map<String, dynamic>));
+      user.cart.add(cartItem);
+      await usersCollection.doc(userId).update(user.toEntity().toDocument());
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+
+  }
+
+  @override
+  Future<void> purchaseProducts(String userId) async {
+    try {
+      DocumentSnapshot doc = await usersCollection.doc(userId).get();
+      MyUser user = MyUser.fromEntity(MyUserEntity.fromDocument(doc.data()! as Map<String, dynamic>));
+
+      int totalPoints = user.cart.fold(0, (sum, item) => sum + item.totalPoints);
+      user.points += totalPoints;
+
+      await updateUserPoints(userId, totalPoints);
+      await distributePointsToNetwork(userId, user.cart.fold(0, (sum, item) => sum + item.totalPrice));
+
+      user.cart.clear();
+      await usersCollection.doc(userId).update(user.toEntity().toDocument());
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+
+  }
+
+  @override
+  Future<void> distributePointsToNetwork(String userId, int totalSpent) async {
+    try {
+      MyUser user = await getMyUser(userId);
+      List<MyUser> network = await getUserNetwork(userId);
+
+      for (String recruiterId in user.recruitedUsers) {
+        await updateUserPoints(recruiterId, (totalSpent * 0.1).toInt());
+        await updateUserEarnings(recruiterId, (totalSpent * 0.1).toInt());
+      }
+
+      for (MyUser recruit in network) {
+        await updateUserPoints(recruit.id, (totalSpent * 0.05).toInt());
+        await updateUserEarnings(recruit.id, (totalSpent * 0.05).toInt());
+      }
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+  
+  @override
+  updateUserInfo(String userId, {String? name, String? email}) async {
+    try {
+      Map<String, dynamic> updatedData = {};
+      if (name != null) updatedData['name'] = name;
+      if (email != null) updatedData['email'] = email;
+      await _firestore.collection('users').doc(userId).update(updatedData);
     } catch (e) {
       log(e.toString());
       rethrow;

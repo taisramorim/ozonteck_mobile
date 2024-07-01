@@ -2,7 +2,7 @@ import 'package:cart_repository/cart_repository.dart';
 import 'package:equatable/equatable.dart';
 
 class MyUserEntity extends Equatable {
-
+  
   final String id;
   final String email;
   final String username;
@@ -12,9 +12,9 @@ class MyUserEntity extends Equatable {
   int level;
   int earnings;
   final List<String> recruitedUsers;
-  List<Cart> cart;
-  
-  MyUserEntity ({
+  final List<CartItemEntity> cart;
+
+  MyUserEntity({
     required this.id,
     required this.email,
     required this.username,
@@ -27,7 +27,7 @@ class MyUserEntity extends Equatable {
     this.cart = const [],
   });
 
-  Map<String, Object?> toDocument(){
+  Map<String, Object?> toDocument() {
     return {
       'id': id,
       'email': email,
@@ -38,7 +38,7 @@ class MyUserEntity extends Equatable {
       'level': level,
       'earnings': earnings,
       'recruitedUsers': recruitedUsers,
-      'cart': cart.map((cart) => cart.toEntity()).toList(),
+      'cart': cart.map((item) => item.toDocument()).toList(),
     };
   }
 
@@ -53,27 +53,10 @@ class MyUserEntity extends Equatable {
       level: doc['level'] as int,
       earnings: doc['earnings'] as int,
       recruitedUsers: List<String>.from(doc['recruitedUsers'] as List),
-      cart: (doc['cart'] as List).map((e) => Cart.fromEntity(e as CartEntity)).toList(),
+      cart: (doc['cart'] as List).map((item) => CartItemEntity.fromDocument(item as Map<String, dynamic>)).toList(),
     );
   }
-  
 
   @override
-  List<Object?> get props => [id, email, name, username, picture, points, level, earnings, recruitedUsers, cart];
-
-  @override
-  String toString(){
-    return '''UserEntity: {
-      id: $id
-      email: $email
-      username: $username
-      name: $name
-      picture: $picture
-      points: $points
-      level: $level
-      earnings: $earnings
-      recruitedUsers: $recruitedUsers
-      cart: $cart
-    }''';
-  }
+  List<Object?> get props => [id, email, username, name, picture, points, level, earnings, recruitedUsers, cart];
 }

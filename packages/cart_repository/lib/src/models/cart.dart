@@ -3,19 +3,10 @@ import 'package:cart_repository/cart_repository.dart';
 class Cart {
   final List<CartItem> items;
 
-  Cart({required this.items});
+  Cart({List<CartItem>? items}) : items = items ?? [];
 
-  double get totalPrice {
-    return items.fold(0, (total, item) {
-      return total + item.product.price * item.quantity;
-    });
-  }
-
-  int get totalPoints {
-    return items.fold(0, (total, current) {
-      return total + current.product.points * current.quantity;
-    });
-  }
+  int get totalPrice => items.fold(0, (total, item) => total + item.totalPrice);
+  int get totalPoints => items.fold(0, (total, item) => total + item.totalPoints);
 
   CartEntity toEntity() {
     return CartEntity(
@@ -25,7 +16,7 @@ class Cart {
 
   static Cart fromEntity(CartEntity entity) {
     return Cart(
-      items: entity.items.map((item) => CartItem.fromEntity(item)).toList(),
+      items: List<CartItem>.from(entity.items.map((item) => CartItem.fromEntity(item))),
     );
   }
 }
